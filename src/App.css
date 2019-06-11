@@ -8,9 +8,11 @@ header {
   background-color: #8762b0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  justify-content: space-between;
+  font-size: calc(5px + 2vmin);
   color: white;
+  min-height: 150px;
+  padding: 10px 0 0 0;
 }
 
 a {
@@ -19,16 +21,18 @@ a {
 
 .leftSide {
   display: flex;
-  background-color: green;
+  /* background-color: green; */
 }
 
 .rightSide {
-  background-color: aqua;
+  display: flex;
+  /* background-color: aqua; */
 }
 
 .topBar {
   display: flex;
   justify-content: space-between;
+  padding: 0 20px;
 }
 
 nav {
@@ -50,4 +54,15 @@ main {
 .resultContainer {
   flex: 1;
   background-color: forestgreen;
+}
+
+#learnLink {
+  font-size: 0.7em;
+}
+
+.instructions {
+  display: flex;
+  justify-content: center;
+  width: 300px;
+  padding: 0 20px 0 40px;
 }

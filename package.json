@@ -8,7 +8,8 @@
     "react-ace": "^7.0.2",
     "react-dom": "^16.8.6",
     "react-progress-button": "^5.1.0",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "react-youtube": "^7.9.0"
   },
   "scripts": {
     "start": "react-scripts start",
