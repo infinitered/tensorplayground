@@ -1,7 +1,6 @@
 .App {
   display: flex;
   flex-direction: column;
-  text-align: center;
   height: 100vh;
 }
 
@@ -9,7 +8,6 @@ header {
   background-color: #8762b0;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
@@ -17,4 +15,39 @@ header {
 
 a {
   color: #fff;
+}
+
+.leftSide {
+  display: flex;
+  background-color: green;
+}
+
+.rightSide {
+  background-color: aqua;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  background-color: #343135;
+}
+
+main {
+  display: flex;
+  flex-direction: row;
+}
+
+.codeContainer {
+  flex: 1;
+  background-color: fuchsia;
+}
+
+.resultContainer {
+  flex: 1;
+  background-color: forestgreen;
 }

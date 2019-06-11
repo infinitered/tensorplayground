@@ -8,7 +8,7 @@ function App() {
       <header>
         <div className="topBar">
           <div className="leftSide">
-            <img src="" className="logo" />
+            <img src="" className="logo" alt="logo" />
             <div className="instructions">select input</div>
             <div className="inputsPicker">inputs picker</div>
           </div>
@@ -25,7 +25,7 @@ function App() {
         <div className="codeContainer">Code goes in here</div>
         <div className="resultContainer">Result goes here</div>
       </main>
-      <footer>Browser Tensor Memory</footer>
+      <footer>Browser Tensor Memory Footer</footer>
     </div>
   )
 }
