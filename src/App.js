@@ -5,6 +5,14 @@ import YouTube from 'react-youtube'
 // Awesome button
 import ProgressButton from 'react-progress-button'
 import '../node_modules/react-progress-button/react-progress-button.css'
+// FontAwesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faPlay,
+  faAlignLeft,
+  faExternalLinkAlt,
+  faLayerGroup
+} from '@fortawesome/free-solid-svg-icons'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 // Input tensors
@@ -79,7 +87,36 @@ function App() {
           </div>
         </div>
         <nav>
-          <div className="leftSide">Runner Buttons</div>
+          <div className="leftSide">
+            <button
+              className="navButton"
+              id="run"
+              onClick={() => window.alert('run')}
+            >
+              <FontAwesomeIcon icon={faPlay} /> Run
+            </button>
+            <button
+              className="navButton"
+              id="reset"
+              onClick={() => window.alert('reset')}
+            >
+              <FontAwesomeIcon icon={faAlignLeft} /> Reset
+            </button>
+            <button
+              className="navButton"
+              id="share"
+              onClick={() => window.alert('share')}
+            >
+              <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
+            </button>
+            <button
+              className="navButton"
+              id="load"
+              onClick={() => window.alert('load')}
+            >
+              <FontAwesomeIcon icon={faLayerGroup} /> Load Model
+            </button>
+          </div>
           <div className="rightSide">
             <a href="#" id="learnLink">
               Learn Machine Learning

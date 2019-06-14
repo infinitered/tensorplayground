@@ -38,6 +38,29 @@ nav {
   display: flex;
   justify-content: space-between;
   background-color: #343135;
+  min-height: 45px;
+}
+
+nav .leftSide {
+  align-items: center;
+  padding-left: 20px;
+}
+
+.navButton {
+  background-color: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: inline;
+  font-size: 1em;
+  margin: 0;
+  padding: 0;
+  margin: 0 10px;
+}
+
+.navButton:hover,
+.navButton:focus {
+  text-decoration: none;
 }
 
 main {
@@ -56,7 +79,9 @@ main {
 }
 
 #learnLink {
-  font-size: 0.7em;
+  font-size: 1em;
+  margin-right: 10px;
+  align-self: center;
 }
 
 .logo {
