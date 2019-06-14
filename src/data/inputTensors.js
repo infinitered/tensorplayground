@@ -17,7 +17,7 @@ export default [
     id: 'gant',
     thumb: './batch_thumb.jpg',
     desc: 'Image Batch',
-    full: './gant.jpg',
+    full: ['./bella.jpg', './italy_rgb.jpg', './gant.jpg'],
     channels: 3
   }
 ]
