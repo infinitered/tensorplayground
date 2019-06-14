@@ -9,7 +9,6 @@ header {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: calc(5px + 2vmin);
   color: white;
   min-height: 150px;
   padding: 10px 0 0 0;
@@ -60,9 +59,42 @@ main {
   font-size: 0.7em;
 }
 
+.logo {
+  align-self: center;
+}
+
 .instructions {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  width: 300px;
+  width: 200px;
   padding: 0 20px 0 40px;
+  font-size: 1.5em;
+}
+
+.inputTensorBtn .pb-button {
+  padding: 0 !important;
+  height: 32px !important;
+}
+
+.inputTensorBtn {
+  width: 175px !important;
+}
+
+.inputTensors {
+  display: flex;
+  flex-direction: row;
+}
+
+.tensorBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  margin: 5px;
+}
+
+.selectedBox {
+  border: 1px solid white;
+  padding: 4px;
 }

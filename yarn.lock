@@ -7016,6 +7016,7 @@ react-is@^16.8.1, react-is@^16.8.4:
 react-progress-button@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/react-progress-button/-/react-progress-button-5.1.0.tgz#87d7538dd392d2e22a4dfb573285b1f77a6595c0"
+  integrity sha512-JbMwEYr16xuB+l4LiDbNYi2zQGxcq4SWXuyi6AUjx34KSIUS6/v3c1lp9oH/klG+amfkMPG63Ogvn4w3ovo0AA==
   dependencies:
     create-react-class "^15.5.2"
     prop-types "^15.5.8"
