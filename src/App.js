@@ -22,6 +22,7 @@ import 'brace/theme/dracula'
 import useMergeState from './lib/useMergeState'
 // Custom components
 import TensorSelector from './components/tensorSelector'
+import CodeProfile from './components/codeProfile'
 // Input Tensor info etc.
 import inputTensors, { startCode, startModelCode } from './data/inputTensors'
 
@@ -57,6 +58,28 @@ function App() {
     codeProfile: null,
     inputTensorInfo: null
   })
+
+  const runCode = async () => {
+    const codeProfile = await tf.profile(() => {
+      const resultTensor = tf.tidy(() => {
+        const userFunc = eval(sandboxSettings.userCode)
+        return userFunc(sandboxSettings.activeTensor, tf)
+      })
+      // Error if sandbox was empty
+      if (!resultTensor) {
+        tf.disposeVariables()
+        throw new Error('Nothing was returned from the sandbox!')
+      }
+      // dispose current display if not used
+      if (
+        resultTensor !== sandboxSettings.displayTensor &&
+        sandboxSettings.displayTensor !== sandboxSettings.activeTensor
+      )
+        sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
+      setSandboxSettings({ displayTensor: resultTensor, currentError: null })
+    })
+    setSandboxSettings({ codeProfile })
+  }
 
   const tensorize = data => {
     const { full: demoImage, channels } = data
@@ -145,11 +168,7 @@ function App() {
         </div>
         <nav>
           <div className="leftSide">
-            <button
-              className="navButton"
-              id="run"
-              onClick={() => window.alert('run')}
-            >
+            <button className="navButton" id="run" onClick={runCode}>
               <FontAwesomeIcon icon={faPlay} /> Run
             </button>
             <button
@@ -183,28 +202,31 @@ function App() {
       </header>
       <main>
         <div className="codeContainer">
-          <AceEditor
-            placeholder="Code goes here"
-            mode="javascript"
-            theme="dracula"
-            name="codeBlock"
-            onChange={code => setSandboxSettings({ userCode: code })}
-            fontSize={14}
-            width="100%"
-            height="100%"
-            showPrintMargin={true}
-            showGutter={true}
-            highlightActiveLine={true}
-            value={sandboxSettings.userCode}
-            setOptions={{
-              enableBasicAutocompletion: false,
-              enableLiveAutocompletion: true,
-              enableSnippets: false,
-              showLineNumbers: true,
-              tabSize: 2,
-              useWorker: false
-            }}
-          />
+          <div className="userCode">
+            <AceEditor
+              placeholder="Code goes here"
+              mode="javascript"
+              theme="dracula"
+              name="codeBlock"
+              onChange={code => setSandboxSettings({ userCode: code })}
+              fontSize={14}
+              width="100%"
+              height="100%"
+              showPrintMargin={true}
+              showGutter={true}
+              highlightActiveLine={true}
+              value={sandboxSettings.userCode}
+              setOptions={{
+                enableBasicAutocompletion: false,
+                enableLiveAutocompletion: true,
+                enableSnippets: false,
+                showLineNumbers: true,
+                tabSize: 2,
+                useWorker: false
+              }}
+            />
+          </div>
+          <CodeProfile profile={sandboxSettings.codeProfile} />
         </div>
         <div className="resultContainer">Result goes here</div>
       </main>

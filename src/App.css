@@ -70,8 +70,15 @@ main {
 }
 
 .codeContainer {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   background-color: fuchsia;
+}
+
+.userCode {
+  display: flex;
+  flex: 1;
 }
 
 .resultContainer {
