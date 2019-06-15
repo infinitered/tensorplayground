@@ -1,6 +1,6 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
+import * as tf from '@tensorflow/tfjs'
 import YouTube from 'react-youtube'
 // Awesome button
 import ProgressButton from 'react-progress-button'
@@ -13,10 +13,17 @@ import {
   faExternalLinkAlt,
   faLayerGroup
 } from '@fortawesome/free-solid-svg-icons'
+// Code editor & styles
+import AceEditor from 'react-ace'
+import 'brace'
+import 'brace/mode/javascript'
+import 'brace/theme/dracula'
+// merge state custom hook
+import useMergeState from './lib/useMergeState'
 // Custom components
 import TensorSelector from './components/tensorSelector'
-// Input tensors
-import inputTensors from './data/inputTensors'
+// Input Tensor info etc.
+import inputTensors, { startCode, startModelCode } from './data/inputTensors'
 
 const playExplainer = event => {
   const iframe = event.target.getIframe()
@@ -42,7 +49,57 @@ const stopExplainer = () => {
 }
 
 function App() {
-  const [currentTensor, setCurrentTensor] = useState(inputTensors[0])
+  const [sandboxSettings, setSandboxSettings] = useMergeState({
+    userCode: '',
+    currentError: null,
+    activeTensor: null,
+    displayTensor: null,
+    codeProfile: null,
+    inputTensorInfo: null
+  })
+
+  const tensorize = data => {
+    const { full: demoImage, channels } = data
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.src = demoImage
+      img.onload = () => {
+        const tensorImg = tf.browser.fromPixels(img, channels)
+        setSandboxSettings({ activeTensor: tensorImg })
+        resolve(tensorImg.shape)
+      }
+      img.onerror = reject
+    })
+  }
+
+  const setupSandbox = async data => {
+    // cleanup
+    tf.disposeVariables()
+    sandboxSettings.activeTensor && sandboxSettings.activeTensor.dispose()
+    sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
+    // kickoff tensorization of input
+    const inputShape = await tensorize(data)
+    // store it al!
+    setSandboxSettings({
+      displayTensor: null,
+      codeProfile: null,
+      userCode: `// TensorPlayground.com
+// INPUT TENSOR SHAPE: ${data.desc} [${inputShape}]
+
+(aTensor, tf) => {
+  // return tensor to show
+  return aTensor
+}`,
+      inputTensorInfo: data
+    })
+  }
+
+  useEffect(() => {
+    // initialize to first input
+    setupSandbox(inputTensors[0])
+  }, [])
+
   return (
     <div className="App">
       <header>
@@ -61,8 +118,8 @@ function App() {
             </div>
             <div className="inputsPicker">
               <TensorSelector
-                activeInputTensor={currentTensor}
-                onSelect={setCurrentTensor}
+                activeInputTensor={sandboxSettings.inputTensorInfo}
+                onSelect={setupSandbox}
                 inputTensors={inputTensors}
               />
             </div>
@@ -125,7 +182,30 @@ function App() {
         </nav>
       </header>
       <main>
-        <div className="codeContainer">Code goes in here</div>
+        <div className="codeContainer">
+          <AceEditor
+            placeholder="Code goes here"
+            mode="javascript"
+            theme="dracula"
+            name="codeBlock"
+            onChange={code => setSandboxSettings({ userCode: code })}
+            fontSize={14}
+            width="100%"
+            height="100%"
+            showPrintMargin={true}
+            showGutter={true}
+            highlightActiveLine={true}
+            value={sandboxSettings.userCode}
+            setOptions={{
+              enableBasicAutocompletion: false,
+              enableLiveAutocompletion: true,
+              enableSnippets: false,
+              showLineNumbers: true,
+              tabSize: 2,
+              useWorker: false
+            }}
+          />
+        </div>
         <div className="resultContainer">Result goes here</div>
       </main>
       <footer>Browser Tensor Memory Footer</footer>
