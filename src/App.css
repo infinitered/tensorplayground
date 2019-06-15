@@ -65,12 +65,20 @@ nav .leftSide {
 
 main {
   display: flex;
+  flex: 1;
   flex-direction: row;
 }
 
 .codeContainer {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   background-color: fuchsia;
+}
+
+.userCode {
+  display: flex;
+  flex: 1;
 }
 
 .resultContainer {

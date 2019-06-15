@@ -4,7 +4,7 @@ export default props => {
   const InputTensors = props =>
     props.inputTensors.map(tData => {
       let styleClasses =
-        props.activeInputTensor.id === tData.id
+        props.activeInputTensor && props.activeInputTensor.id === tData.id
           ? 'tensorBox selectedBox'
           : 'tensorBox'
       return (
