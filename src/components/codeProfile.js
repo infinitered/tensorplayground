@@ -1,9 +1,11 @@
 import * as React from 'react'
+import formatKB from '../lib/formatKB'
 
 export default ({ profile }) => {
-  // shortcircuit
-  if (!profile) return null
+  // grab values, but default to zero
   const { newBytes, newTensors, peakBytes } = profile
+    ? profile
+    : { newBytes: 0, newTensors: 0, peakBytes: 0 }
   const cleanPeak = peakBytes < 0 ? 0 : peakBytes
   return (
     <div style={styles.container}>
@@ -11,7 +13,7 @@ export default ({ profile }) => {
       <div style={styles.memBox}>
         <div style={styles.dataPoint}>
           <p>
-            <strong>New Bytes:</strong> {Math.round(newBytes / 1024)} KB
+            <strong>New Bytes:</strong> {formatKB(newBytes)} KB
           </p>
         </div>
         <div style={styles.dataPoint}>
@@ -21,7 +23,7 @@ export default ({ profile }) => {
         </div>
         <div style={styles.dataPoint}>
           <p>
-            <strong>Peak Bytes:</strong> {Math.round(cleanPeak / 1024)} KB
+            <strong>Peak Bytes:</strong> {formatKB(cleanPeak)} KB
           </p>
         </div>
       </div>

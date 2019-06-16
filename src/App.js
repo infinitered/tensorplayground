@@ -23,6 +23,7 @@ import useMergeState from './lib/useMergeState'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
+import MemoryStatus from './components/memoryStatus'
 // Input Tensor info etc.
 import inputTensors, { startCode, startModelCode } from './data/inputTensors'
 
@@ -230,7 +231,9 @@ function App() {
         </div>
         <div className="resultContainer">Result goes here</div>
       </main>
-      <footer>Browser Tensor Memory Footer</footer>
+      <footer>
+        <MemoryStatus />
+      </footer>
     </div>
   )
 }
