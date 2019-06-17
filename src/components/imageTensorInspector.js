@@ -135,7 +135,7 @@ export default props => {
           <TensorColors aTensor={props.tensor} />
         </div>
         <div style={styles.rightColumn}>
-          <textarea style={styles.displayText} ref={tensorText}>
+          <textarea style={styles.displayText} ref={tensorText} readOnly>
             {props.text}
           </textarea>
         </div>
