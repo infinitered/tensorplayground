@@ -236,7 +236,7 @@ function App() {
               fontSize={14}
               width="100%"
               height="100%"
-              showPrintMargin={true}
+              showPrintMargin={false}
               showGutter={true}
               highlightActiveLine={true}
               value={sandboxSettings.userCode}

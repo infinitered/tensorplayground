@@ -128,7 +128,7 @@ export default props => {
   }, [props.tensor])
 
   return (
-    <div>
+    <div style={styles.container}>
       <canvas style={styles.canvas} ref={tensorDisplay} />
       <div style={styles.column}>
         <div style={styles.leftColumn}>
@@ -145,9 +145,16 @@ export default props => {
 }
 
 const styles = {
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%'
+  },
   column: {
-    display: 'inline-flex',
-    justifyContent: 'space-between'
+    display: 'flex',
+    justifyContent: 'space-between',
+    height: '100%',
+    marginRight: '6px'
   },
   leftColumn: {
     // maxWidth: '50%'
@@ -155,8 +162,8 @@ const styles = {
   },
   rightColumn: {
     display: 'flex',
-    flexDirection: 'column'
-    // backgroundColor: "blue"
+    flexDirection: 'column',
+    flex: 1
   },
   displayText: {
     minWidth: '380px',

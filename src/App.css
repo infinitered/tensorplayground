@@ -90,6 +90,13 @@ main {
   background-color: #20262e;
 }
 
+.resultContainer:empty {
+  background-image: url('./img/run.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+}
+
 #learnLink {
   font-size: 1em;
   margin-right: 10px;
