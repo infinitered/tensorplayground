@@ -24,6 +24,7 @@ import useMergeState from './lib/useMergeState'
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
+import ImageTensorInspector from './components/imageTensorInspector'
 // Input Tensor info etc.
 import inputTensors, { startCode, startModelCode } from './data/inputTensors'
 
@@ -89,8 +90,13 @@ function App() {
       img.crossOrigin = 'anonymous'
       img.src = demoImage
       img.onload = () => {
+        // cleanup
+        tf.disposeVariables()
+        let previousActive = sandboxSettings.activeTensor
+        sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
         const tensorImg = tf.browser.fromPixels(img, channels)
-        setSandboxSettings({ activeTensor: tensorImg })
+        setSandboxSettings({ activeTensor: tensorImg, displayTensor: null })
+        if (previousActive) previousActive.dispose()
         resolve(tensorImg.shape)
       }
       img.onerror = reject
@@ -98,15 +104,10 @@ function App() {
   }
 
   const setupSandbox = async data => {
-    // cleanup
-    tf.disposeVariables()
-    sandboxSettings.activeTensor && sandboxSettings.activeTensor.dispose()
-    sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
     // store it al!
     setSandboxSettings({
-      displayTensor: null,
       codeProfile: null,
       userCode: `// TensorPlayground.com
 // INPUT TENSOR SHAPE: ${data.desc} [${inputShape}]
@@ -167,7 +168,7 @@ function App() {
             </div>
           </div>
         </div>
-        <nav>
+        <nav id="runNav">
           <div className="leftSide">
             <button className="navButton" id="run" onClick={runCode}>
               <FontAwesomeIcon icon={faPlay} /> Run
@@ -229,7 +230,9 @@ function App() {
           </div>
           <CodeProfile profile={sandboxSettings.codeProfile} />
         </div>
-        <div className="resultContainer">Result goes here</div>
+        <div className="resultContainer">
+          <ImageTensorInspector tensor={sandboxSettings.displayTensor} />
+        </div>
       </main>
       <footer>
         <MemoryStatus />
