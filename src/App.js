@@ -181,10 +181,16 @@ function App() {
         </div>
         <nav id="runNav">
           <div className="leftSide">
-            <button className="navButton" id="run" onClick={runCode}>
+            <button
+              title="Run Code (shift + enter)"
+              className="navButton"
+              id="run"
+              onClick={runCode}
+            >
               <FontAwesomeIcon icon={faPlay} /> Run
             </button>
             <button
+              title="Reset Code"
               className="navButton"
               id="reset"
               onClick={() => window.alert('reset')}
@@ -192,6 +198,7 @@ function App() {
               <FontAwesomeIcon icon={faAlignLeft} /> Reset
             </button>
             <button
+              title="Share this playground"
               className="navButton"
               id="share"
               onClick={() => window.alert('share')}
@@ -199,6 +206,7 @@ function App() {
               <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
             </button>
             <button
+              title="Load an external model"
               className="navButton"
               id="load"
               onClick={() => window.alert('load')}
