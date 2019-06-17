@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import './App.css'
 import * as tf from '@tensorflow/tfjs'
 import YouTube from 'react-youtube'
@@ -24,6 +24,7 @@ import useMergeState from './lib/useMergeState'
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
+import ImageTensorInspector from './components/imageTensorInspector'
 // Input Tensor info etc.
 import inputTensors, { startCode, startModelCode } from './data/inputTensors'
 
@@ -89,8 +90,13 @@ function App() {
       img.crossOrigin = 'anonymous'
       img.src = demoImage
       img.onload = () => {
+        // cleanup
+        tf.disposeVariables()
+        let previousActive = sandboxSettings.activeTensor
+        sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
         const tensorImg = tf.browser.fromPixels(img, channels)
-        setSandboxSettings({ activeTensor: tensorImg })
+        setSandboxSettings({ activeTensor: tensorImg, displayTensor: null })
+        if (previousActive) previousActive.dispose()
         resolve(tensorImg.shape)
       }
       img.onerror = reject
@@ -98,15 +104,10 @@ function App() {
   }
 
   const setupSandbox = async data => {
-    // cleanup
-    tf.disposeVariables()
-    sandboxSettings.activeTensor && sandboxSettings.activeTensor.dispose()
-    sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
     // store it al!
     setSandboxSettings({
-      displayTensor: null,
       codeProfile: null,
       userCode: `// TensorPlayground.com
 // INPUT TENSOR SHAPE: ${data.desc} [${inputShape}]
@@ -119,10 +120,21 @@ function App() {
     })
   }
 
+  // onload
   useEffect(() => {
     // initialize to first input
     setupSandbox(inputTensors[0])
   }, [])
+
+  // enable shift + enter shortcut (Memoized)
+  // moving to useEffect loses access to state from runCode
+  document.onkeydown = useCallback(evt => {
+    evt = evt || window.event
+    if (evt.shiftKey && evt.keyCode == 13) {
+      runCode()
+      evt.preventDefault()
+    }
+  })
 
   return (
     <div className="App">
@@ -167,12 +179,18 @@ function App() {
             </div>
           </div>
         </div>
-        <nav>
+        <nav id="runNav">
           <div className="leftSide">
-            <button className="navButton" id="run" onClick={runCode}>
+            <button
+              title="Run Code (shift + enter)"
+              className="navButton"
+              id="run"
+              onClick={runCode}
+            >
               <FontAwesomeIcon icon={faPlay} /> Run
             </button>
             <button
+              title="Reset Code"
               className="navButton"
               id="reset"
               onClick={() => window.alert('reset')}
@@ -180,6 +198,7 @@ function App() {
               <FontAwesomeIcon icon={faAlignLeft} /> Reset
             </button>
             <button
+              title="Share this playground"
               className="navButton"
               id="share"
               onClick={() => window.alert('share')}
@@ -187,6 +206,7 @@ function App() {
               <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
             </button>
             <button
+              title="Load an external model"
               className="navButton"
               id="load"
               onClick={() => window.alert('load')}
@@ -209,7 +229,10 @@ function App() {
               mode="javascript"
               theme="dracula"
               name="codeBlock"
-              onChange={code => setSandboxSettings({ userCode: code })}
+              // Memoize the callback for efficiency
+              onChange={useCallback(code =>
+                setSandboxSettings({ userCode: code })
+              )}
               fontSize={14}
               width="100%"
               height="100%"
@@ -229,7 +252,9 @@ function App() {
           </div>
           <CodeProfile profile={sandboxSettings.codeProfile} />
         </div>
-        <div className="resultContainer">Result goes here</div>
+        <div className="resultContainer">
+          <ImageTensorInspector tensor={sandboxSettings.displayTensor} />
+        </div>
       </main>
       <footer>
         <MemoryStatus />
