@@ -61,7 +61,18 @@ function App() {
     inputTensorInfo: null
   })
 
+  const sharePlayground = () => {
+    if (window.history.replaceState) {
+      window.history.replaceState(
+        'code',
+        'Tensor Playground',
+        `${window.location.origin}?code=${encodeURI(sandboxSettings.userCode)}`
+      )
+    }
+  }
+
   const runCode = async () => {
+    sharePlayground() // update URL
     const codeProfile = await tf.profile(() => {
       const resultTensor = tf.tidy(() => {
         const userFunc = eval(sandboxSettings.userCode)
