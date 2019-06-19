@@ -1,15 +1,3 @@
-export const startCode = `
-(aTensor, tf) => {
-  // return a tensor
-  return aTensor
-}`
-
-export const startModelCode = `
-(aTensor, model, tf) => {
-  // return a tensor
-  return aTensor
-}`
-
 export default [
   {
     id: 'bella',

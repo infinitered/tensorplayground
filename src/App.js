@@ -26,7 +26,7 @@ import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
 import ImageTensorInspector from './components/imageTensorInspector'
 // Input Tensor info etc.
-import inputTensors, { startCode, startModelCode } from './data/inputTensors'
+import inputTensors from './data/inputTensors'
 
 const playExplainer = event => {
   const iframe = event.target.getIframe()
@@ -62,11 +62,15 @@ function App() {
   })
 
   const sharePlayground = () => {
+    const { userCode, inputTensorInfo } = sandboxSettings
+    let urlParams = new URLSearchParams()
+    urlParams.append('code', userCode)
+    urlParams.append('inputTensor', inputTensorInfo.id)
     if (window.history.replaceState) {
       window.history.replaceState(
         'code',
         'Tensor Playground',
-        `${window.location.origin}?code=${encodeURI(sandboxSettings.userCode)}`
+        `${window.location.origin}?${urlParams}`
       )
     }
   }
@@ -114,27 +118,51 @@ function App() {
     })
   }
 
-  const setupSandbox = async data => {
+  const setupSandbox = async (data, code) => {
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
-    // store it al!
-    setSandboxSettings({
-      codeProfile: null,
-      userCode: `// TensorPlayground.com
+    let startCode
+    if (code) {
+      startCode = code
+    } else {
+      // Setup code
+      startCode = `// TensorPlayground.com
 // INPUT TENSOR SHAPE: ${data.desc} [${inputShape}]
 
 (aTensor, tf) => {
   // return tensor to show
   return aTensor
-}`,
+}`
+      // Clear URL
+      if (window.history.replaceState) {
+        window.history.replaceState(
+          'code',
+          'Tensor Playground',
+          `${window.location.origin}`
+        )
+      }
+    }
+
+    // store it al!
+    setSandboxSettings({
+      codeProfile: null,
+      userCode: startCode,
       inputTensorInfo: data
     })
   }
 
   // onload
-  useEffect(() => {
-    // initialize to first input
-    setupSandbox(inputTensors[0])
+  useEffect(async () => {
+    let urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.has('code') && urlParams.has('inputTensor')) {
+      // setup sandbox based on querystring
+      const inputID = urlParams.get('inputTensor')
+      const inputTensorInfo = inputTensors.find(x => x.id === inputID)
+      await setupSandbox(inputTensorInfo, urlParams.get('code'))
+    } else {
+      // initialize to first input
+      await setupSandbox(inputTensors[0])
+    }
   }, [])
 
   // enable shift + enter shortcut (Memoized)
