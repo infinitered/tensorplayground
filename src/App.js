@@ -20,13 +20,14 @@ import 'brace/mode/javascript'
 import 'brace/theme/dracula'
 // merge state custom hook
 import useMergeState from './lib/useMergeState'
+import copyToClipboard from './lib/copyToClipboard'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
 import ImageTensorInspector from './components/imageTensorInspector'
 // Input Tensor info etc.
-import inputTensors, { startCode, startModelCode } from './data/inputTensors'
+import inputTensors from './data/inputTensors'
 
 const playExplainer = event => {
   const iframe = event.target.getIframe()
@@ -61,7 +62,22 @@ function App() {
     inputTensorInfo: null
   })
 
+  const sharePlayground = () => {
+    const { userCode, inputTensorInfo } = sandboxSettings
+    let urlParams = new URLSearchParams()
+    urlParams.append('code', userCode)
+    urlParams.append('inputTensor', inputTensorInfo.id)
+    if (window.history.replaceState) {
+      window.history.replaceState(
+        'code',
+        'Tensor Playground',
+        `${window.location.origin}?${urlParams}`
+      )
+    }
+  }
+
   const runCode = async () => {
+    sharePlayground() // update URL
     const codeProfile = await tf.profile(() => {
       const resultTensor = tf.tidy(() => {
         const userFunc = eval(sandboxSettings.userCode)
@@ -103,34 +119,58 @@ function App() {
     })
   }
 
-  const setupSandbox = async data => {
+  const setupSandbox = async (data, code) => {
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
-    // store it al!
-    setSandboxSettings({
-      codeProfile: null,
-      userCode: `// TensorPlayground.com
+    let startCode
+    if (code) {
+      startCode = code
+    } else {
+      // Setup code
+      startCode = `// TensorPlayground.com
 // INPUT TENSOR SHAPE: ${data.desc} [${inputShape}]
 
 (aTensor, tf) => {
   // return tensor to show
   return aTensor
-}`,
+}`
+      // Clear URL
+      if (window.history.replaceState) {
+        window.history.replaceState(
+          'code',
+          'Tensor Playground',
+          `${window.location.origin}`
+        )
+      }
+    }
+
+    // store it al!
+    setSandboxSettings({
+      codeProfile: null,
+      userCode: startCode,
       inputTensorInfo: data
     })
   }
 
   // onload
-  useEffect(() => {
-    // initialize to first input
-    setupSandbox(inputTensors[0])
+  useEffect(async () => {
+    let urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.has('code') && urlParams.has('inputTensor')) {
+      // setup sandbox based on querystring
+      const inputID = urlParams.get('inputTensor')
+      const inputTensorInfo = inputTensors.find(x => x.id === inputID)
+      await setupSandbox(inputTensorInfo, urlParams.get('code'))
+    } else {
+      // initialize to first input
+      await setupSandbox(inputTensors[0])
+    }
   }, [])
 
   // enable shift + enter shortcut (Memoized)
   // moving to useEffect loses access to state from runCode
   document.onkeydown = useCallback(evt => {
     evt = evt || window.event
-    if (evt.shiftKey && evt.keyCode == 13) {
+    if (evt.shiftKey && evt.keyCode === 13) {
       runCode()
       evt.preventDefault()
     }
@@ -193,7 +233,7 @@ function App() {
               title="Reset Code"
               className="navButton"
               id="reset"
-              onClick={() => window.alert('reset')}
+              onClick={() => setupSandbox(sandboxSettings.inputTensorInfo)}
             >
               <FontAwesomeIcon icon={faAlignLeft} /> Reset
             </button>
@@ -201,7 +241,11 @@ function App() {
               title="Share this playground"
               className="navButton"
               id="share"
-              onClick={() => window.alert('share')}
+              onClick={() => {
+                sharePlayground()
+                copyToClipboard(window.location.href)
+                window.alert('Copied to Clipboard')
+              }}
             >
               <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
             </button>
