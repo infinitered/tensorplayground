@@ -20,6 +20,7 @@ import 'brace/mode/javascript'
 import 'brace/theme/dracula'
 // merge state custom hook
 import useMergeState from './lib/useMergeState'
+import copyToClipboard from './lib/copyToClipboard'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
@@ -240,7 +241,11 @@ function App() {
               title="Share this playground"
               className="navButton"
               id="share"
-              onClick={() => window.alert('share')}
+              onClick={() => {
+                sharePlayground()
+                copyToClipboard(window.location.href)
+                window.alert('Copied to Clipboard')
+              }}
             >
               <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
             </button>
