@@ -130,7 +130,7 @@ function App() {
   // moving to useEffect loses access to state from runCode
   document.onkeydown = useCallback(evt => {
     evt = evt || window.event
-    if (evt.shiftKey && evt.keyCode == 13) {
+    if (evt.shiftKey && evt.keyCode === 13) {
       runCode()
       evt.preventDefault()
     }
@@ -193,7 +193,7 @@ function App() {
               title="Reset Code"
               className="navButton"
               id="reset"
-              onClick={() => window.alert('reset')}
+              onClick={() => setupSandbox(sandboxSettings.inputTensorInfo)}
             >
               <FontAwesomeIcon icon={faAlignLeft} /> Reset
             </button>
