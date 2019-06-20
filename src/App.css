@@ -83,6 +83,7 @@ main {
 .userCode {
   display: flex;
   flex: 1;
+  z-index: 0;
 }
 
 .resultContainer {

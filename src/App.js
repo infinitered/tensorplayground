@@ -18,6 +18,8 @@ import AceEditor from 'react-ace'
 import 'brace'
 import 'brace/mode/javascript'
 import 'brace/theme/dracula'
+// modals
+import Modal from 'react-modal'
 // merge state custom hook
 import useMergeState from './lib/useMergeState'
 import copyToClipboard from './lib/copyToClipboard'
@@ -303,6 +305,24 @@ function App() {
       <footer>
         <MemoryStatus />
       </footer>
+      <Modal
+        isOpen={true}
+        shouldCloseOnOverlayClick={true}
+        style={{
+          content: {
+            top: '50%',
+            bottom: 'auto',
+            left: '50%',
+            right: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)'
+          }
+        }}
+        contentLabel="share"
+      >
+        <h1>Share:</h1>
+        <h3>http://www.nachos.com/fdsafdsaf</h3>
+      </Modal>
     </div>
   )
 }
