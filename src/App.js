@@ -61,7 +61,8 @@ function App() {
     activeTensor: null,
     displayTensor: null,
     codeProfile: null,
-    inputTensorInfo: null
+    inputTensorInfo: null,
+    shareVisible: false
   })
 
   const sharePlayground = () => {
@@ -178,6 +179,10 @@ function App() {
     }
   })
 
+  const hideModal = () => {
+    setSandboxSettings({shareVisible: false})
+  }
+
   return (
     <div className="App">
       <header>
@@ -246,7 +251,7 @@ function App() {
               onClick={() => {
                 sharePlayground()
                 copyToClipboard(window.location.href)
-                window.alert('Copied to Clipboard')
+                setSandboxSettings({shareVisible: true})
               }}
             >
               <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
@@ -306,22 +311,32 @@ function App() {
         <MemoryStatus />
       </footer>
       <Modal
-        isOpen={true}
+        isOpen={sandboxSettings.shareVisible}
+        onRequestClose={hideModal}
         shouldCloseOnOverlayClick={true}
-        style={{
-          content: {
-            top: '50%',
-            bottom: 'auto',
-            left: '50%',
-            right: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)'
-          }
-        }}
-        contentLabel="share"
+        shouldCloseOnEscape={true}
+        className="modal"
+        overlayClassName="overlay"
+        contentLabel="share modal"
       >
-        <h1>Share:</h1>
-        <h3>http://www.nachos.com/fdsafdsaf</h3>
+
+        <div className="modalTop">
+          <div className="leftSide">
+            <h1>Share:</h1>
+          </div> 
+          <div className="modalClose">
+            <button className="navButton" onClick={hideModal}>🅧</button>
+          </div>
+        </div>
+        <div className="modalTop">
+        <div className="leftSide">
+            <h3>http://www.nachos.com/fdsafdsaf</h3>
+          </div> 
+          <div className="modalClose">
+            <button>copy</button>
+          </div>
+        </div>
+        
       </Modal>
     </div>
   )

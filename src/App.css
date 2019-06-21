@@ -143,3 +143,37 @@ main {
   border: 1px solid white;
   padding: 4px;
 }
+
+/* Overlay styles */
+.modal {
+  position: absolute;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  background-color: #343135;
+  padding: 20px;
+  border: 1px solid #6c448d;
+  color: white;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #8662b057;  
+}
+
+.modalTop {
+  display: flex;
+  justify-content: space-between;
+  min-width: 350px;
+}
+
+.modalClose {
+  font-size: 2em;
+}
