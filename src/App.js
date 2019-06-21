@@ -62,7 +62,7 @@ function App() {
     displayTensor: null,
     codeProfile: null,
     inputTensorInfo: null,
-    shareVisible: false
+    shareVisible: true
   })
 
   const sharePlayground = () => {
@@ -180,7 +180,7 @@ function App() {
   })
 
   const hideModal = () => {
-    setSandboxSettings({shareVisible: false})
+    setSandboxSettings({ shareVisible: false })
   }
 
   return (
@@ -250,8 +250,7 @@ function App() {
               id="share"
               onClick={() => {
                 sharePlayground()
-                copyToClipboard(window.location.href)
-                setSandboxSettings({shareVisible: true})
+                setSandboxSettings({ shareVisible: true })
               }}
             >
               <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
@@ -315,28 +314,42 @@ function App() {
         onRequestClose={hideModal}
         shouldCloseOnOverlayClick={true}
         shouldCloseOnEscape={true}
+        closeTimeoutMS={100}
         className="modal"
         overlayClassName="overlay"
         contentLabel="share modal"
       >
-
         <div className="modalTop">
           <div className="leftSide">
-            <h1>Share:</h1>
-          </div> 
+            <h1>Share Link:</h1>
+          </div>
           <div className="modalClose">
-            <button className="navButton" onClick={hideModal}>🅧</button>
+            <button className="navButton" onClick={hideModal}>
+              🅧
+            </button>
           </div>
         </div>
         <div className="modalTop">
-        <div className="leftSide">
-            <h3>http://www.nachos.com/fdsafdsaf</h3>
-          </div> 
+          <div className="leftSide">
+            <input
+              type="text"
+              value={window.location.href}
+              class="shareBox"
+              readonly
+            />
+          </div>
           <div className="modalClose">
-            <button>copy</button>
+            <button
+              className="copyButton"
+              onClick={() => {
+                copyToClipboard(window.location.href)
+                setSandboxSettings({ shareVisible: false })
+              }}
+            >
+              copy
+            </button>
           </div>
         </div>
-        
       </Modal>
     </div>
   )

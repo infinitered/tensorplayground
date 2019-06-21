@@ -157,6 +157,7 @@ main {
   padding: 20px;
   border: 1px solid #6c448d;
   color: white;
+  transition: 0.15s all linear;
 }
 
 .overlay {
@@ -165,7 +166,7 @@ main {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #8662b057;  
+  background-color: #8662b057;
 }
 
 .modalTop {
@@ -176,4 +177,24 @@ main {
 
 .modalClose {
   font-size: 2em;
+  margin-top: -10px;
+}
+
+.copyButton {
+  background-color: #8662b0;
+  color: white;
+  padding: 8px;
+  margin: 0px 0 0 20px;
+  font-size: 0.5em;
+  border-radius: 12px;
+  font-weight: bold;
+}
+
+.shareBox {
+  background-color: #20262e;
+  border: 0;
+  padding-left: 12px;
+  font-size: 1.5em;
+  max-width: 250px;
+  color: white;
 }
