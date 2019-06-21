@@ -18,6 +18,8 @@ import AceEditor from 'react-ace'
 import 'brace'
 import 'brace/mode/javascript'
 import 'brace/theme/dracula'
+// modals
+import Modal from 'react-modal'
 // merge state custom hook
 import useMergeState from './lib/useMergeState'
 import copyToClipboard from './lib/copyToClipboard'
@@ -59,7 +61,8 @@ function App() {
     activeTensor: null,
     displayTensor: null,
     codeProfile: null,
-    inputTensorInfo: null
+    inputTensorInfo: null,
+    shareVisible: true
   })
 
   const sharePlayground = () => {
@@ -176,6 +179,10 @@ function App() {
     }
   })
 
+  const hideModal = () => {
+    setSandboxSettings({ shareVisible: false })
+  }
+
   return (
     <div className="App">
       <header>
@@ -243,8 +250,7 @@ function App() {
               id="share"
               onClick={() => {
                 sharePlayground()
-                copyToClipboard(window.location.href)
-                window.alert('Copied to Clipboard')
+                setSandboxSettings({ shareVisible: true })
               }}
             >
               <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
@@ -303,6 +309,48 @@ function App() {
       <footer>
         <MemoryStatus />
       </footer>
+      <Modal
+        isOpen={sandboxSettings.shareVisible}
+        onRequestClose={hideModal}
+        shouldCloseOnOverlayClick={true}
+        shouldCloseOnEscape={true}
+        closeTimeoutMS={100}
+        className="modal"
+        overlayClassName="overlay"
+        contentLabel="share modal"
+      >
+        <div className="modalTop">
+          <div className="leftSide">
+            <h1>Share Link:</h1>
+          </div>
+          <div className="modalClose">
+            <button className="navButton" onClick={hideModal}>
+              🅧
+            </button>
+          </div>
+        </div>
+        <div className="modalTop">
+          <div className="leftSide">
+            <input
+              type="text"
+              value={window.location.href}
+              class="shareBox"
+              readonly
+            />
+          </div>
+          <div className="modalClose">
+            <button
+              className="copyButton"
+              onClick={() => {
+                copyToClipboard(window.location.href)
+                setSandboxSettings({ shareVisible: false })
+              }}
+            >
+              copy
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }
