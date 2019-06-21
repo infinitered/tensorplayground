@@ -198,3 +198,21 @@ main {
   max-width: 250px;
   color: white;
 }
+
+.errorBox {
+  background-color: #e5677f;
+}
+
+.errorMessage {
+  padding: 15px 10px;
+  margin: 0;
+  font-family: Courier, monospace, 'Courier New';
+  transition: 0.15s all linear;
+  font-size: 0.9em;
+}
+
+/* Bye bye when empty */
+.errorMessage:empty {
+  padding: 0;
+  transition: 0.15s all linear;
+}

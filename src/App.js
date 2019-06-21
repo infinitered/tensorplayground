@@ -80,26 +80,31 @@ function App() {
   }
 
   const runCode = async () => {
-    sharePlayground() // update URL
-    const codeProfile = await tf.profile(() => {
-      const resultTensor = tf.tidy(() => {
-        const userFunc = eval(sandboxSettings.userCode)
-        return userFunc(sandboxSettings.activeTensor, tf)
+    try {
+      sharePlayground() // update URL
+      const codeProfile = await tf.profile(() => {
+        const resultTensor = tf.tidy(() => {
+          const userFunc = eval(sandboxSettings.userCode)
+          return userFunc(sandboxSettings.activeTensor, tf)
+        })
+        // Error if sandbox was empty
+        if (!resultTensor) {
+          tf.disposeVariables()
+          throw new Error('Nothing was returned from the sandbox!')
+        }
+        // dispose current display if not used
+        if (
+          resultTensor !== sandboxSettings.displayTensor &&
+          sandboxSettings.displayTensor !== sandboxSettings.activeTensor
+        )
+          sandboxSettings.displayTensor &&
+            sandboxSettings.displayTensor.dispose()
+        setSandboxSettings({ displayTensor: resultTensor, currentError: null })
       })
-      // Error if sandbox was empty
-      if (!resultTensor) {
-        tf.disposeVariables()
-        throw new Error('Nothing was returned from the sandbox!')
-      }
-      // dispose current display if not used
-      if (
-        resultTensor !== sandboxSettings.displayTensor &&
-        sandboxSettings.displayTensor !== sandboxSettings.activeTensor
-      )
-        sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
-      setSandboxSettings({ displayTensor: resultTensor, currentError: null })
-    })
-    setSandboxSettings({ codeProfile })
+      setSandboxSettings({ codeProfile })
+    } catch (e) {
+      setSandboxSettings({ currentError: e.message, displayTensor: null })
+    }
   }
 
   const tensorize = data => {
@@ -299,6 +304,9 @@ function App() {
                 useWorker: false
               }}
             />
+          </div>
+          <div className="errorBox">
+            <p className="errorMessage">{sandboxSettings.currentError}</p>
           </div>
           <CodeProfile profile={sandboxSettings.codeProfile} />
         </div>
