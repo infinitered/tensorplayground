@@ -62,7 +62,7 @@ function App() {
     displayTensor: null,
     codeProfile: null,
     inputTensorInfo: null,
-    shareVisible: true
+    shareVisible: false
   })
 
   const sharePlayground = () => {
