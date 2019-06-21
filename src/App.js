@@ -18,16 +18,15 @@ import AceEditor from 'react-ace'
 import 'brace'
 import 'brace/mode/javascript'
 import 'brace/theme/dracula'
-// modals
-import Modal from 'react-modal'
+
 // merge state custom hook
 import useMergeState from './lib/useMergeState'
-import copyToClipboard from './lib/copyToClipboard'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
 import ImageTensorInspector from './components/imageTensorInspector'
+import ShareModal from './components/shareModal'
 // Input Tensor info etc.
 import inputTensors from './data/inputTensors'
 
@@ -80,26 +79,31 @@ function App() {
   }
 
   const runCode = async () => {
-    sharePlayground() // update URL
-    const codeProfile = await tf.profile(() => {
-      const resultTensor = tf.tidy(() => {
-        const userFunc = eval(sandboxSettings.userCode)
-        return userFunc(sandboxSettings.activeTensor, tf)
+    try {
+      sharePlayground() // update URL
+      const codeProfile = await tf.profile(() => {
+        const resultTensor = tf.tidy(() => {
+          const userFunc = eval(sandboxSettings.userCode)
+          return userFunc(sandboxSettings.activeTensor, tf)
+        })
+        // Error if sandbox was empty
+        if (!resultTensor) {
+          tf.disposeVariables()
+          throw new Error('Nothing was returned from the sandbox!')
+        }
+        // dispose current display if not used
+        if (
+          resultTensor !== sandboxSettings.displayTensor &&
+          sandboxSettings.displayTensor !== sandboxSettings.activeTensor
+        )
+          sandboxSettings.displayTensor &&
+            sandboxSettings.displayTensor.dispose()
+        setSandboxSettings({ displayTensor: resultTensor, currentError: null })
       })
-      // Error if sandbox was empty
-      if (!resultTensor) {
-        tf.disposeVariables()
-        throw new Error('Nothing was returned from the sandbox!')
-      }
-      // dispose current display if not used
-      if (
-        resultTensor !== sandboxSettings.displayTensor &&
-        sandboxSettings.displayTensor !== sandboxSettings.activeTensor
-      )
-        sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
-      setSandboxSettings({ displayTensor: resultTensor, currentError: null })
-    })
-    setSandboxSettings({ codeProfile })
+      setSandboxSettings({ codeProfile })
+    } catch (e) {
+      setSandboxSettings({ currentError: e.message, displayTensor: null })
+    }
   }
 
   const tensorize = data => {
@@ -156,16 +160,16 @@ function App() {
   }
 
   // onload
-  useEffect(async () => {
+  useEffect(() => {
     let urlParams = new URLSearchParams(window.location.search)
     if (urlParams.has('code') && urlParams.has('inputTensor')) {
       // setup sandbox based on querystring
       const inputID = urlParams.get('inputTensor')
       const inputTensorInfo = inputTensors.find(x => x.id === inputID)
-      await setupSandbox(inputTensorInfo, urlParams.get('code'))
+      setupSandbox(inputTensorInfo, urlParams.get('code'))
     } else {
       // initialize to first input
-      await setupSandbox(inputTensors[0])
+      setupSandbox(inputTensors[0])
     }
   }, [])
 
@@ -179,7 +183,7 @@ function App() {
     }
   })
 
-  const hideModal = () => {
+  const hideShareModal = () => {
     setSandboxSettings({ shareVisible: false })
   }
 
@@ -300,6 +304,9 @@ function App() {
               }}
             />
           </div>
+          <div className="errorBox">
+            <p className="errorMessage">{sandboxSettings.currentError}</p>
+          </div>
           <CodeProfile profile={sandboxSettings.codeProfile} />
         </div>
         <div className="resultContainer">
@@ -309,48 +316,10 @@ function App() {
       <footer>
         <MemoryStatus />
       </footer>
-      <Modal
+      <ShareModal
         isOpen={sandboxSettings.shareVisible}
-        onRequestClose={hideModal}
-        shouldCloseOnOverlayClick={true}
-        shouldCloseOnEscape={true}
-        closeTimeoutMS={100}
-        className="modal"
-        overlayClassName="overlay"
-        contentLabel="share modal"
-      >
-        <div className="modalTop">
-          <div className="leftSide">
-            <h1>Share Link:</h1>
-          </div>
-          <div className="modalClose">
-            <button className="navButton" onClick={hideModal}>
-              🅧
-            </button>
-          </div>
-        </div>
-        <div className="modalTop">
-          <div className="leftSide">
-            <input
-              type="text"
-              value={window.location.href}
-              class="shareBox"
-              readonly
-            />
-          </div>
-          <div className="modalClose">
-            <button
-              className="copyButton"
-              onClick={() => {
-                copyToClipboard(window.location.href)
-                setSandboxSettings({ shareVisible: false })
-              }}
-            >
-              copy
-            </button>
-          </div>
-        </div>
-      </Modal>
+        hideModal={hideShareModal}
+      />
     </div>
   )
 }
