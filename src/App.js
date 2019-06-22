@@ -5,14 +5,7 @@ import YouTube from 'react-youtube'
 // Awesome button
 import ProgressButton from 'react-progress-button'
 import '../node_modules/react-progress-button/react-progress-button.css'
-// FontAwesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faPlay,
-  faAlignLeft,
-  faExternalLinkAlt,
-  faLayerGroup
-} from '@fortawesome/free-solid-svg-icons'
+
 // Code editor & styles
 import AceEditor from 'react-ace'
 import 'brace'
@@ -27,6 +20,7 @@ import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
 import ImageTensorInspector from './components/imageTensorInspector'
 import ShareModal from './components/shareModal'
+import RunNav from './components/runNav'
 // Input Tensor info etc.
 import inputTensors from './data/inputTensors'
 
@@ -230,50 +224,14 @@ function App() {
             </div>
           </div>
         </div>
-        <nav id="runNav">
-          <div className="leftSide">
-            <button
-              title="Run Code (shift + enter)"
-              className="navButton"
-              id="run"
-              onClick={runCode}
-            >
-              <FontAwesomeIcon icon={faPlay} /> Run
-            </button>
-            <button
-              title="Reset Code"
-              className="navButton"
-              id="reset"
-              onClick={() => setupSandbox(sandboxSettings.inputTensorInfo)}
-            >
-              <FontAwesomeIcon icon={faAlignLeft} /> Reset
-            </button>
-            <button
-              title="Share this playground"
-              className="navButton"
-              id="share"
-              onClick={() => {
-                sharePlayground()
-                setSandboxSettings({ shareVisible: true })
-              }}
-            >
-              <FontAwesomeIcon icon={faExternalLinkAlt} /> Share
-            </button>
-            <button
-              title="Load an external model"
-              className="navButton"
-              id="load"
-              onClick={() => window.alert('load')}
-            >
-              <FontAwesomeIcon icon={faLayerGroup} /> Load Model
-            </button>
-          </div>
-          <div className="rightSide">
-            <a href="#" id="learnLink">
-              Learn Machine Learning
-            </a>
-          </div>
-        </nav>
+        <RunNav
+          run={runCode}
+          reset={() => setupSandbox(sandboxSettings.inputTensorInfo)}
+          share={() => {
+            sharePlayground()
+            setSandboxSettings({ shareVisible: true })
+          }}
+        />
       </header>
       <main>
         <div className="codeContainer">
