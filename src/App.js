@@ -20,6 +20,8 @@ import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
 import ImageTensorInspector from './components/imageTensorInspector'
 import ShareModal from './components/shareModal'
+import ModelModal from './components/modelModal'
+import InputModal from './components/inputModal'
 import RunNav from './components/runNav'
 // Input Tensor info etc.
 import inputTensors from './data/inputTensors'
@@ -55,7 +57,9 @@ function App() {
     displayTensor: null,
     codeProfile: null,
     inputTensorInfo: null,
-    shareVisible: false
+    shareVisible: false,
+    modelVisible: false,
+    inputVisible: true
   })
 
   const sharePlayground = () => {
@@ -177,8 +181,12 @@ function App() {
     }
   })
 
-  const hideShareModal = () => {
-    setSandboxSettings({ shareVisible: false })
+  const hideAllModals = () => {
+    setSandboxSettings({
+      shareVisible: false,
+      modelVisible: false,
+      inputVisible: false
+    })
   }
 
   return (
@@ -276,7 +284,16 @@ function App() {
       </footer>
       <ShareModal
         isOpen={sandboxSettings.shareVisible}
-        hideModal={hideShareModal}
+        hideModal={hideAllModals}
+      />
+      <ModelModal
+        isOpen={sandboxSettings.modelVisible}
+        hideModal={hideAllModals}
+      />
+      <InputModal
+        isOpen={sandboxSettings.inputVisible}
+        hideModal={hideAllModals}
+        setInput={url => setupSandbox({ full: url, desc: url })}
       />
     </div>
   )

@@ -184,6 +184,7 @@ const styles = {
     color: 'white'
   },
   canvas: {
-    maxWidth: '100%'
+    maxWidth: '100%',
+    alignSelf: 'center'
   }
 }
