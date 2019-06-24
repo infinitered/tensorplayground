@@ -16,7 +16,7 @@ const ShareRow = props => {
         </div>
         <div className="modalClose">
           <button
-            className="copyButton"
+            className="modalButton"
             onClick={() => {
               props.hideModal()
             }}

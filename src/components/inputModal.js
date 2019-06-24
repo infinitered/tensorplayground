@@ -1,19 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 // modals
 import Modal from 'react-modal'
 
+// example: https://i.imgur.com/PieUY1f.jpg
+const isValidUrl = string => {
+  var res = string.match(
+    /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
+  )
+  return res !== null
+}
+
 const ShareRow = props => {
+  const [inputURL, setInputURL] = useState('')
+  const [urlValid, setURLValid] = useState(false)
   if (props.isOpen) {
     return (
       <div className="modalTop">
         <div className="leftSide">
-          <input type="text" class="shareBox" />
+          <input
+            type="text"
+            class="shareBox"
+            value={inputURL}
+            onChange={({ target }) => {
+              setInputURL(target.value)
+              setURLValid(isValidUrl(target.value))
+            }}
+          />
         </div>
         <div className="modalClose">
           <button
-            className="copyButton"
+            disabled={!urlValid}
+            className="modalButton"
             onClick={() => {
-              props.setInput('https://i.imgur.com/PieUY1f.jpg')
+              props.setInput(inputURL)
               props.hideModal()
             }}
           >
