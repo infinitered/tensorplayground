@@ -39,7 +39,7 @@ export default props => (
         title="Load an external model"
         className="navButton"
         id="load"
-        onClick={() => window.alert('load')}
+        onClick={props.load}
       >
         <FontAwesomeIcon icon={faLayerGroup} /> Load Model
       </button>

@@ -251,6 +251,9 @@ function App() {
             sharePlayground()
             setSandboxSettings({ shareVisible: true })
           }}
+          load={() => setSandboxSettings({ modelVisible: true })
+
+          }
         />
       </header>
       <main>
