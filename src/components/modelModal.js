@@ -1,7 +1,6 @@
 import React from 'react'
 // modals
 import Modal from 'react-modal'
-import copyToClipboard from '../lib/copyToClipboard'
 
 const ShareRow = props => {
   if (props.isOpen) {
@@ -19,7 +18,6 @@ const ShareRow = props => {
           <button
             className="modalButton"
             onClick={() => {
-              copyToClipboard(window.location.href)
               props.hideModal()
             }}
           >
@@ -54,7 +52,7 @@ export default props => (
   >
     <div className="modalTop">
       <div className="leftSide">
-        <h1>Share Link:</h1>
+        <h1>Load Model:</h1>
       </div>
       <div className="modalClose">
         <button className="navButton" onClick={props.hideModal}>

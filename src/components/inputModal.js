@@ -1,29 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 // modals
 import Modal from 'react-modal'
-import copyToClipboard from '../lib/copyToClipboard'
+
+// example: https://i.imgur.com/PieUY1f.jpg
+const isValidUrl = string => {
+  var res = string.match(
+    /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
+  )
+  return res !== null
+}
 
 const ShareRow = props => {
+  const [inputURL, setInputURL] = useState('')
+  const [urlValid, setURLValid] = useState(false)
   if (props.isOpen) {
     return (
       <div className="modalTop">
         <div className="leftSide">
           <input
             type="text"
-            value={window.location.href}
             class="shareBox"
-            readonly
+            value={inputURL}
+            onChange={({ target }) => {
+              setInputURL(target.value)
+              setURLValid(isValidUrl(target.value))
+            }}
           />
         </div>
         <div className="modalClose">
           <button
+            disabled={!urlValid}
             className="modalButton"
             onClick={() => {
-              copyToClipboard(window.location.href)
+              props.setInput(inputURL)
               props.hideModal()
             }}
           >
-            copy
+            use
           </button>
         </div>
       </div>
@@ -54,7 +67,7 @@ export default props => (
   >
     <div className="modalTop">
       <div className="leftSide">
-        <h1>Share Link:</h1>
+        <h1>Input Tensor URL:</h1>
       </div>
       <div className="modalClose">
         <button className="navButton" onClick={props.hideModal}>

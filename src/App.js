@@ -20,6 +20,8 @@ import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
 import ImageTensorInspector from './components/imageTensorInspector'
 import ShareModal from './components/shareModal'
+import ModelModal from './components/modelModal'
+import InputModal from './components/inputModal'
 import RunNav from './components/runNav'
 // Input Tensor info etc.
 import inputTensors from './data/inputTensors'
@@ -55,7 +57,9 @@ function App() {
     displayTensor: null,
     codeProfile: null,
     inputTensorInfo: null,
-    shareVisible: false
+    shareVisible: false,
+    modelVisible: false,
+    inputVisible: false
   })
 
   const sharePlayground = () => {
@@ -116,7 +120,10 @@ function App() {
         if (previousActive) previousActive.dispose()
         resolve(tensorImg.shape)
       }
-      img.onerror = reject
+      img.onerror = () => {
+        setSandboxSettings({ currentError: `Unable to load: ${demoImage}` })
+        reject()
+      }
     })
   }
 
@@ -129,7 +136,8 @@ function App() {
     } else {
       // Setup code
       startCode = `// TensorPlayground.com
-// INPUT TENSOR SHAPE: ${data.desc} [${inputShape}]
+// ${data.desc}
+// INPUT TENSOR SHAPE: [${inputShape}]
 
 (aTensor, tf) => {
   // return tensor to show
@@ -159,7 +167,12 @@ function App() {
     if (urlParams.has('code') && urlParams.has('inputTensor')) {
       // setup sandbox based on querystring
       const inputID = urlParams.get('inputTensor')
-      const inputTensorInfo = inputTensors.find(x => x.id === inputID)
+      let localTensor = inputTensors.find(x => x.id === inputID)
+      const inputTensorInfo = localTensor || {
+        id: inputID,
+        full: inputID,
+        desc: inputID
+      }
       setupSandbox(inputTensorInfo, urlParams.get('code'))
     } else {
       // initialize to first input
@@ -177,8 +190,12 @@ function App() {
     }
   })
 
-  const hideShareModal = () => {
-    setSandboxSettings({ shareVisible: false })
+  const hideAllModals = () => {
+    setSandboxSettings({
+      shareVisible: false,
+      modelVisible: false,
+      inputVisible: false
+    })
   }
 
   return (
@@ -193,7 +210,10 @@ function App() {
             />
             <div className="instructions">
               <span>Select your input tensor or</span>
-              <ProgressButton className="inputTensorBtn">
+              <ProgressButton
+                className="inputTensorBtn"
+                onClick={async () => setSandboxSettings({ inputVisible: true })}
+              >
                 Add URL
               </ProgressButton>
             </div>
@@ -276,7 +296,16 @@ function App() {
       </footer>
       <ShareModal
         isOpen={sandboxSettings.shareVisible}
-        hideModal={hideShareModal}
+        hideModal={hideAllModals}
+      />
+      <ModelModal
+        isOpen={sandboxSettings.modelVisible}
+        hideModal={hideAllModals}
+      />
+      <InputModal
+        isOpen={sandboxSettings.inputVisible}
+        hideModal={hideAllModals}
+        setInput={url => setupSandbox({ id: url, full: url, desc: url })}
       />
     </div>
   )

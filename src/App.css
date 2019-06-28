@@ -180,7 +180,7 @@ main {
   margin-top: -10px;
 }
 
-.copyButton {
+.modalButton {
   background-color: #8662b0;
   color: white;
   padding: 8px;
@@ -188,6 +188,11 @@ main {
   font-size: 0.5em;
   border-radius: 12px;
   font-weight: bold;
+}
+
+.modalButton:disabled {
+  background-color: #181f27;
+  color: #8662b0;
 }
 
 .shareBox {
