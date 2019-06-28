@@ -10,6 +10,7 @@
     "react": "^16.8.6",
     "react-ace": "^7.0.2",
     "react-dom": "^16.8.6",
+    "react-dropdown": "^1.6.4",
     "react-modal": "^3.8.1",
     "react-progress-button": "^5.1.0",
     "react-scripts": "3.0.1",

@@ -28,6 +28,10 @@ a {
   /* background-color: green; */
 }
 
+.fullSize {
+  flex: 1;
+}
+
 .rightSide {
   display: flex;
   /* background-color: aqua; */
@@ -154,7 +158,7 @@ main {
   margin-right: -50%;
   transform: translate(-50%, -50%);
   background-color: #343135;
-  padding: 20px;
+  padding: 30px;
   border: 1px solid #6c448d;
   color: white;
   transition: 0.15s all linear;
@@ -220,4 +224,13 @@ main {
 .errorMessage:empty {
   padding: 0;
   transition: 0.15s all linear;
+}
+
+.customURL {
+  background: #eee5fa;
+  font-style: italic;
+}
+
+.modalProgressButton {
+  padding-left: 8px;
 }
