@@ -57,6 +57,8 @@ function App() {
     displayTensor: null,
     codeProfile: null,
     inputTensorInfo: null,
+    activeModel: null,
+    activeModelInfo: {},
     shareVisible: false,
     modelVisible: false,
     inputVisible: false
@@ -82,7 +84,7 @@ function App() {
       const codeProfile = await tf.profile(() => {
         const resultTensor = tf.tidy(() => {
           const userFunc = eval(sandboxSettings.userCode)
-          return userFunc(sandboxSettings.activeTensor, tf)
+          return userFunc(sandboxSettings.activeTensor, tf, sandboxSettings.activeModel)
         })
         // Error if sandbox was empty
         if (!resultTensor) {
@@ -127,9 +129,10 @@ function App() {
     })
   }
 
-  const setupSandbox = async (data, code) => {
+  const setupSandbox = async (data, settings = {}) => {
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
+    const {code} = settings
     let startCode
     if (code) {
       startCode = code
@@ -138,11 +141,24 @@ function App() {
       startCode = `// TensorPlayground.com
 // ${data.desc}
 // INPUT TENSOR SHAPE: [${inputShape}]
+`
 
+      // If they have a model add that
+      if (sandboxSettings.activeModel) {
+        startCode += `// MODEL: ${sandboxSettings.activeModelInfo.label} ${sandboxSettings.activeModelInfo.info}
+
+(aTensor, tf, model) => {
+  // return tensor to show
+  return aTensor
+}`
+      } else {
+        // No model start code
+        startCode += `
 (aTensor, tf) => {
   // return tensor to show
   return aTensor
 }`
+      }
       // Clear URL
       if (window.history.replaceState) {
         window.history.replaceState(
@@ -173,12 +189,19 @@ function App() {
         full: inputID,
         desc: inputID
       }
-      setupSandbox(inputTensorInfo, urlParams.get('code'))
+      setupSandbox(inputTensorInfo, {code: urlParams.get('code')})
     } else {
       // initialize to first input
       setupSandbox(inputTensors[0])
     }
   }, [])
+
+  // Model added or removed
+  useEffect(() => {
+    if (sandboxSettings.activeModel) {
+      setupSandbox(sandboxSettings.inputTensorInfo)
+    }
+  }, [sandboxSettings.activeModel])
 
   // enable shift + enter shortcut (Memoized)
   // moving to useEffect loses access to state from runCode
@@ -246,7 +269,9 @@ function App() {
         </div>
         <RunNav
           run={runCode}
-          reset={() => setupSandbox(sandboxSettings.inputTensorInfo)}
+          reset={() => {
+            setupSandbox(sandboxSettings.inputTensorInfo)
+          }}
           share={() => {
             sharePlayground()
             setSandboxSettings({ shareVisible: true })
@@ -304,6 +329,12 @@ function App() {
       <ModelModal
         isOpen={sandboxSettings.modelVisible}
         hideModal={hideAllModals}
+        onModelLoad={(info, model) => {
+          setSandboxSettings({
+            activeModel: model,
+            activeModelInfo: info
+          })
+        }}
       />
       <InputModal
         isOpen={sandboxSettings.inputVisible}

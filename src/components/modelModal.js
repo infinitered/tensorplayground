@@ -74,6 +74,7 @@ export default props => {
                   // load model
                   const loadFunction = currentModel.type === 'graph' ? tf.loadGraphModel : tf.loadLayersModel
                   const model = await loadFunction(currentModel.url, {fromTFHub: currentModel.fromTFHub})
+                  props.onModelLoad(currentModel, model)
                 }}
                 onSuccess={props.hideModal}
                 onError={e => window.alert(e.message)}
