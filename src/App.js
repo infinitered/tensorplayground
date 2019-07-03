@@ -65,10 +65,11 @@ function App() {
   })
 
   const sharePlayground = () => {
-    const { userCode, inputTensorInfo } = sandboxSettings
+    const { userCode, inputTensorInfo, activeModelInfo } = sandboxSettings
     let urlParams = new URLSearchParams()
     urlParams.append('code', userCode)
     urlParams.append('inputTensor', inputTensorInfo.id)
+    urlParams.append('modelInfo', JSON.stringify(activeModelInfo))
     if (window.history.replaceState) {
       window.history.replaceState(
         'code',
@@ -132,8 +133,18 @@ function App() {
   const setupSandbox = async (data, settings = {}) => {
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
-    const {code} = settings
+    const {code, modelInfo} = settings
     let startCode
+    let model = sandboxSettings.activeModel
+    let activeModelInfo = modelInfo ? modelInfo : sandboxSettings.activeModelInfo
+    
+    // If we were passed info but no model, load the model
+    if (modelInfo) {
+      const loadFunction = modelInfo.type === 'graph' ? tf.loadGraphModel : tf.loadLayersModel
+      model = await loadFunction(modelInfo.url, {fromTFHub: modelInfo.fromTFHub})
+    }
+
+    // Handle code setup
     if (code) {
       startCode = code
     } else {
@@ -144,8 +155,8 @@ function App() {
 `
 
       // If they have a model add that
-      if (sandboxSettings.activeModel) {
-        startCode += `// MODEL: ${sandboxSettings.activeModelInfo.label} ${sandboxSettings.activeModelInfo.info}
+      if (model) {
+        startCode += `// MODEL: ${activeModelInfo.label} ${activeModelInfo.info}
 
 (aTensor, tf, model) => {
   // return tensor to show
@@ -173,7 +184,13 @@ function App() {
     setSandboxSettings({
       codeProfile: null,
       userCode: startCode,
-      inputTensorInfo: data
+      inputTensorInfo: data,
+      activeModelInfo: activeModelInfo,
+      activeModel: model,
+      // close modals
+      shareVisible: false,
+      modelVisible: false,
+      inputVisible: false      
     })
   }
 
@@ -183,25 +200,19 @@ function App() {
     if (urlParams.has('code') && urlParams.has('inputTensor')) {
       // setup sandbox based on querystring
       const inputID = urlParams.get('inputTensor')
+      const modelInfo = JSON.parse(urlParams.get('modelInfo'))
       let localTensor = inputTensors.find(x => x.id === inputID)
       const inputTensorInfo = localTensor || {
         id: inputID,
         full: inputID,
         desc: inputID
       }
-      setupSandbox(inputTensorInfo, {code: urlParams.get('code')})
+      setupSandbox(inputTensorInfo, {code: urlParams.get('code'), modelInfo})
     } else {
       // initialize to first input
       setupSandbox(inputTensors[0])
     }
   }, [])
-
-  // Model added or removed
-  useEffect(() => {
-    if (sandboxSettings.activeModel) {
-      setupSandbox(sandboxSettings.inputTensorInfo)
-    }
-  }, [sandboxSettings.activeModel])
 
   // enable shift + enter shortcut (Memoized)
   // moving to useEffect loses access to state from runCode
@@ -329,10 +340,9 @@ function App() {
       <ModelModal
         isOpen={sandboxSettings.modelVisible}
         hideModal={hideAllModals}
-        onModelLoad={(info, model) => {
-          setSandboxSettings({
-            activeModel: model,
-            activeModelInfo: info
+        onModelLoad={(info) => {
+          setupSandbox(sandboxSettings.inputTensorInfo, {
+            modelInfo: info
           })
         }}
       />

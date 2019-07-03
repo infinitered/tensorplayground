@@ -1,6 +1,4 @@
 import React, {useState} from 'react'
-// TFJS for hub
-import * as tf from '@tensorflow/tfjs'
 // modals
 import Modal from 'react-modal'
 // dropdown
@@ -70,11 +68,8 @@ export default props => {
 
             <ProgressButton
                 className='modalProgressButton'
-                onClick={async () => {
-                  // load model
-                  const loadFunction = currentModel.type === 'graph' ? tf.loadGraphModel : tf.loadLayersModel
-                  const model = await loadFunction(currentModel.url, {fromTFHub: currentModel.fromTFHub})
-                  props.onModelLoad(currentModel, model)
+                onClick={() => {
+                  props.onModelLoad(currentModel)
                 }}
                 onSuccess={props.hideModal}
                 onError={e => window.alert(e.message)}
