@@ -85,7 +85,11 @@ function App() {
       const codeProfile = await tf.profile(() => {
         const resultTensor = tf.tidy(() => {
           const userFunc = eval(sandboxSettings.userCode)
-          return userFunc(sandboxSettings.activeTensor, tf, sandboxSettings.activeModel)
+          return userFunc(
+            sandboxSettings.activeTensor,
+            tf,
+            sandboxSettings.activeModel
+          )
         })
         // Error if sandbox was empty
         if (!resultTensor) {
@@ -133,20 +137,30 @@ function App() {
   const setupSandbox = async (data, settings = {}) => {
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
-    const {code, modelInfo, killModel} = settings
+    const { code, modelInfo, killModel } = settings
     let startCode
     let model = sandboxSettings.activeModel
-    let activeModelInfo = modelInfo ? modelInfo : sandboxSettings.activeModelInfo
-    
+    let activeModelInfo = modelInfo
+      ? modelInfo
+      : sandboxSettings.activeModelInfo
+
     if (killModel) {
-      model = null 
+      // cleanup
+      if (model) tf.dispose(model)
+      model = null
       activeModelInfo = {}
     }
 
     // If we were passed info but no model, load the model
     if (modelInfo) {
-      const loadFunction = modelInfo.type === 'graph' ? tf.loadGraphModel : tf.loadLayersModel
-      model = await loadFunction(modelInfo.url, {fromTFHub: modelInfo.fromTFHub})
+      const loadFunction =
+        modelInfo.type === 'graph' ? tf.loadGraphModel : tf.loadLayersModel
+      // out with the old (if it exists)
+      if (model) tf.dispose(model)
+      // in with the new
+      model = await loadFunction(modelInfo.url, {
+        fromTFHub: modelInfo.fromTFHub
+      })
     }
 
     // Handle code setup
@@ -195,7 +209,7 @@ function App() {
       // close modals
       shareVisible: false,
       modelVisible: false,
-      inputVisible: false      
+      inputVisible: false
     })
   }
 
@@ -212,7 +226,7 @@ function App() {
         full: inputID,
         desc: inputID
       }
-      setupSandbox(inputTensorInfo, {code: urlParams.get('code'), modelInfo})
+      setupSandbox(inputTensorInfo, { code: urlParams.get('code'), modelInfo })
     } else {
       // initialize to first input
       setupSandbox(inputTensors[0])
@@ -286,15 +300,13 @@ function App() {
         <RunNav
           run={runCode}
           reset={() => {
-            setupSandbox(sandboxSettings.inputTensorInfo, {killModel: true})
+            setupSandbox(sandboxSettings.inputTensorInfo, { killModel: true })
           }}
           share={() => {
             sharePlayground()
             setSandboxSettings({ shareVisible: true })
           }}
-          load={() => setSandboxSettings({ modelVisible: true })
-
-          }
+          load={() => setSandboxSettings({ modelVisible: true })}
         />
       </header>
       <main>
@@ -345,7 +357,7 @@ function App() {
       <ModelModal
         isOpen={sandboxSettings.modelVisible}
         hideModal={hideAllModals}
-        onModelLoad={(info) => {
+        onModelLoad={info => {
           setupSandbox(sandboxSettings.inputTensorInfo, {
             modelInfo: info
           })

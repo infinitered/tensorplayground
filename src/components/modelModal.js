@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 // modals
 import Modal from 'react-modal'
 // dropdown
@@ -10,31 +10,56 @@ import '../../node_modules/react-progress-button/react-progress-button.css'
 
 const options = [
   {
-    value: 'customurl', label: 'Custom URL', className: 'customURL', info: 'Custom URL'
+    value: 'customurl',
+    label: 'Custom URL',
+    className: 'customURL',
+    info: 'Custom URL'
   },
   {
-    type: 'group', name: 'TF Hub Models', items: [
-      { 
-        value: 'mobilenetv2', label: 'Mobilenet v2', info: 'Expects [batch, 224, 224, 3] input', 
-        url: 'https://tfhub.dev/google/imagenet/mobilenet_v2_100_224/classification/2', fromTFHub: true, type: 'graph' 
+    type: 'group',
+    name: 'TF Hub Models',
+    items: [
+      {
+        value: 'mobilenetv2',
+        label: 'Mobilenet v2',
+        info: 'Expects [batch, 224, 224, 3] input',
+        url:
+          'https://tfhub.dev/google/imagenet/mobilenet_v2_100_224/classification/2',
+        fromTFHub: true,
+        type: 'graph'
       },
-      { 
-        value: 'inceptionv3', label: 'Inception v3', info: 'Expects [batch, 299, 200, 3] input',
-        url: 'https://tfhub.dev/google/imagenet/inception_v3/classification/1', fromTFHub: true, type: 'graph' 
+      {
+        value: 'inceptionv3',
+        label: 'Inception v3',
+        info: 'Expects [batch, 299, 200, 3] input',
+        url: 'https://tfhub.dev/google/imagenet/inception_v3/classification/1',
+        fromTFHub: true,
+        type: 'graph'
       },
-      { 
-        value: 'resnetv2', label: 'Resnet v2', info: 'Expects [batch, 224, 224, 3] input', 
-        url: 'https://tfhub.dev/google/imagenet/resnet_v2_50/classification/1', fromTFHub: true, type: 'graph'
+      {
+        value: 'resnetv2',
+        label: 'Resnet v2',
+        info: 'Expects [batch, 224, 224, 3] input',
+        url: 'https://tfhub.dev/google/imagenet/resnet_v2_50/classification/1',
+        fromTFHub: true,
+        type: 'graph'
       }
-   ]
+    ]
   },
   {
-   type: 'group', name: 'Community Models', items: [
-    { 
-      value: 'nsfwjs', label: 'NSFWJS', info: 'Expects [batch, 224, 224, 3] input', 
-      url: 'https://s3.amazonaws.com/ir_public/nsfwjscdn/TFJS_nsfw_mobilenet/tfjs_quant_nsfw_mobilenet/model.json', fromTFHub: false, type: 'layers'
-    }
-   ]
+    type: 'group',
+    name: 'Community Models',
+    items: [
+      {
+        value: 'nsfwjs',
+        label: 'NSFWJS',
+        info: 'Expects [batch, 224, 224, 3] input',
+        url:
+          'https://s3.amazonaws.com/ir_public/nsfwjscdn/TFJS_nsfw_mobilenet/tfjs_quant_nsfw_mobilenet/model.json',
+        fromTFHub: false,
+        type: 'layers'
+      }
+    ]
   }
 ]
 
@@ -42,11 +67,17 @@ export default props => {
   const [currentModel, setCurrentModel] = useState({})
 
   const getFullInfo = mKey => {
-    const choices = options.map(x => x.value ? x : null || (x.items && x.items.map(y => y.value ? y : null))).flat()
-    return choices.find(x => x.value === mKey)    
+    const choices = options
+      .map(x =>
+        x.value
+          ? x
+          : null || (x.items && x.items.map(y => (y.value ? y : null)))
+      )
+      .flat()
+    return choices.find(x => x.value === mKey)
   }
 
-  const dropdownChange = ({value}) => {
+  const dropdownChange = ({ value }) => {
     const selected = getFullInfo(value)
     setCurrentModel(selected)
   }
@@ -65,17 +96,16 @@ export default props => {
             />
           </div>
           <div className="modalClose">
-
             <ProgressButton
-                className='modalProgressButton'
-                onClick={() => {
-                  props.onModelLoad(currentModel)
-                }}
-                onSuccess={props.hideModal}
-                onError={e => window.alert(e.message)}
-              >
-                Load
-              </ProgressButton>            
+              className="modalProgressButton"
+              onClick={async () => {
+                props.onModelLoad(currentModel)
+              }}
+              onSuccess={props.hideModal}
+              onError={e => window.alert(e.message)}
+            >
+              Load
+            </ProgressButton>
           </div>
         </div>
       )
@@ -114,9 +144,7 @@ export default props => {
         </div>
       </div>
       <ShareRow {...props} />
-      <div>
-        {currentModel.info}
-      </div>
+      <div>{currentModel.info}</div>
     </Modal>
   )
 }
