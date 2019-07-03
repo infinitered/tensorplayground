@@ -133,11 +133,16 @@ function App() {
   const setupSandbox = async (data, settings = {}) => {
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
-    const {code, modelInfo} = settings
+    const {code, modelInfo, killModel} = settings
     let startCode
     let model = sandboxSettings.activeModel
     let activeModelInfo = modelInfo ? modelInfo : sandboxSettings.activeModelInfo
     
+    if (killModel) {
+      model = null 
+      activeModelInfo = {}
+    }
+
     // If we were passed info but no model, load the model
     if (modelInfo) {
       const loadFunction = modelInfo.type === 'graph' ? tf.loadGraphModel : tf.loadLayersModel
@@ -281,7 +286,7 @@ function App() {
         <RunNav
           run={runCode}
           reset={() => {
-            setupSandbox(sandboxSettings.inputTensorInfo)
+            setupSandbox(sandboxSettings.inputTensorInfo, {killModel: true})
           }}
           share={() => {
             sharePlayground()
