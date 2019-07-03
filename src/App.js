@@ -57,16 +57,19 @@ function App() {
     displayTensor: null,
     codeProfile: null,
     inputTensorInfo: null,
+    activeModel: null,
+    activeModelInfo: {},
     shareVisible: false,
     modelVisible: false,
     inputVisible: false
   })
 
   const sharePlayground = () => {
-    const { userCode, inputTensorInfo } = sandboxSettings
+    const { userCode, inputTensorInfo, activeModelInfo } = sandboxSettings
     let urlParams = new URLSearchParams()
     urlParams.append('code', userCode)
     urlParams.append('inputTensor', inputTensorInfo.id)
+    urlParams.append('modelInfo', JSON.stringify(activeModelInfo))
     if (window.history.replaceState) {
       window.history.replaceState(
         'code',
@@ -82,7 +85,11 @@ function App() {
       const codeProfile = await tf.profile(() => {
         const resultTensor = tf.tidy(() => {
           const userFunc = eval(sandboxSettings.userCode)
-          return userFunc(sandboxSettings.activeTensor, tf)
+          return userFunc(
+            sandboxSettings.activeTensor,
+            tf,
+            sandboxSettings.activeModel
+          )
         })
         // Error if sandbox was empty
         if (!resultTensor) {
@@ -127,10 +134,36 @@ function App() {
     })
   }
 
-  const setupSandbox = async (data, code) => {
+  const setupSandbox = async (data, settings = {}) => {
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
+    const { code, modelInfo, killModel } = settings
     let startCode
+    let model = sandboxSettings.activeModel
+    let activeModelInfo = modelInfo
+      ? modelInfo
+      : sandboxSettings.activeModelInfo
+
+    if (killModel) {
+      // cleanup
+      if (model) tf.dispose(model)
+      model = null
+      activeModelInfo = {}
+    }
+
+    // If we were passed info but no model, load the model
+    if (modelInfo) {
+      const loadFunction =
+        modelInfo.type === 'graph' ? tf.loadGraphModel : tf.loadLayersModel
+      // out with the old (if it exists)
+      if (model) tf.dispose(model)
+      // in with the new
+      model = await loadFunction(modelInfo.url, {
+        fromTFHub: modelInfo.fromTFHub
+      })
+    }
+
+    // Handle code setup
     if (code) {
       startCode = code
     } else {
@@ -138,11 +171,24 @@ function App() {
       startCode = `// TensorPlayground.com
 // ${data.desc}
 // INPUT TENSOR SHAPE: [${inputShape}]
+`
 
+      // If they have a model add that
+      if (model) {
+        startCode += `// MODEL: ${activeModelInfo.label} ${activeModelInfo.info}
+
+(aTensor, tf, model) => {
+  // return tensor to show
+  return aTensor
+}`
+      } else {
+        // No model start code
+        startCode += `
 (aTensor, tf) => {
   // return tensor to show
   return aTensor
 }`
+      }
       // Clear URL
       if (window.history.replaceState) {
         window.history.replaceState(
@@ -157,7 +203,13 @@ function App() {
     setSandboxSettings({
       codeProfile: null,
       userCode: startCode,
-      inputTensorInfo: data
+      inputTensorInfo: data,
+      activeModelInfo: activeModelInfo,
+      activeModel: model,
+      // close modals
+      shareVisible: false,
+      modelVisible: false,
+      inputVisible: false
     })
   }
 
@@ -167,13 +219,14 @@ function App() {
     if (urlParams.has('code') && urlParams.has('inputTensor')) {
       // setup sandbox based on querystring
       const inputID = urlParams.get('inputTensor')
+      const modelInfo = JSON.parse(urlParams.get('modelInfo'))
       let localTensor = inputTensors.find(x => x.id === inputID)
       const inputTensorInfo = localTensor || {
         id: inputID,
         full: inputID,
         desc: inputID
       }
-      setupSandbox(inputTensorInfo, urlParams.get('code'))
+      setupSandbox(inputTensorInfo, { code: urlParams.get('code'), modelInfo })
     } else {
       // initialize to first input
       setupSandbox(inputTensors[0])
@@ -246,11 +299,14 @@ function App() {
         </div>
         <RunNav
           run={runCode}
-          reset={() => setupSandbox(sandboxSettings.inputTensorInfo)}
+          reset={() => {
+            setupSandbox(sandboxSettings.inputTensorInfo, { killModel: true })
+          }}
           share={() => {
             sharePlayground()
             setSandboxSettings({ shareVisible: true })
           }}
+          load={() => setSandboxSettings({ modelVisible: true })}
         />
       </header>
       <main>
@@ -301,6 +357,11 @@ function App() {
       <ModelModal
         isOpen={sandboxSettings.modelVisible}
         hideModal={hideAllModals}
+        onModelLoad={info => {
+          setupSandbox(sandboxSettings.inputTensorInfo, {
+            modelInfo: info
+          })
+        }}
       />
       <InputModal
         isOpen={sandboxSettings.inputVisible}
