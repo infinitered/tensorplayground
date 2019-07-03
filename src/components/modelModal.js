@@ -22,7 +22,8 @@ const options = [
       {
         value: 'mobilenetv2',
         label: 'Mobilenet v2',
-        info: 'Expects [batch, 224, 224, 3] input',
+        info: 'Expects [batch, 224, 224, 3]',
+        link: 'https://arxiv.org/abs/1801.04381',
         url:
           'https://tfhub.dev/google/imagenet/mobilenet_v2_100_224/classification/2',
         fromTFHub: true,
@@ -31,7 +32,8 @@ const options = [
       {
         value: 'inceptionv3',
         label: 'Inception v3',
-        info: 'Expects [batch, 299, 200, 3] input',
+        info: 'Expects [batch, 299, 200, 3]',
+        link: 'http://arxiv.org/abs/1512.00567',
         url: 'https://tfhub.dev/google/imagenet/inception_v3/classification/1',
         fromTFHub: true,
         type: 'graph'
@@ -39,7 +41,8 @@ const options = [
       {
         value: 'resnetv2',
         label: 'Resnet v2',
-        info: 'Expects [batch, 224, 224, 3] input',
+        info: 'Expects [batch, 224, 224, 3]',
+        link: 'https://arxiv.org/abs/1603.05027',
         url: 'https://tfhub.dev/google/imagenet/resnet_v2_50/classification/1',
         fromTFHub: true,
         type: 'graph'
@@ -53,7 +56,8 @@ const options = [
       {
         value: 'nsfwjs',
         label: 'NSFWJS',
-        info: 'Expects [batch, 224, 224, 3] input',
+        info: 'Expects [batch, 224, 224, 3]',
+        link: 'https://github.com/GantMan/nsfw_model',
         url:
           'https://s3.amazonaws.com/ir_public/nsfwjscdn/TFJS_nsfw_mobilenet/tfjs_quant_nsfw_mobilenet/model.json',
         fromTFHub: false,
@@ -144,7 +148,7 @@ export default props => {
         </div>
       </div>
       <ShareRow {...props} />
-      <div>{currentModel.info}</div>
+      <div><a href={currentModel.link} target="_blank">{currentModel.link}</a></div>
     </Modal>
   )
 }

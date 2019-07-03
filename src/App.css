@@ -55,6 +55,15 @@ nav .leftSide {
   padding-left: 20px;
 }
 
+nav .rightSide {
+  align-items: center;
+}
+
+.navLink {
+  margin: 0 15px 0 4px;
+  text-decoration: none;
+}
+
 .navButton {
   background-color: transparent;
   color: white;
@@ -234,3 +243,5 @@ main {
 .modalProgressButton {
   padding-left: 8px;
 }
+
+
