@@ -86,6 +86,17 @@ export default props => {
     setCurrentModel(selected)
   }
 
+  const URLInput = () => {
+    if (currentModel.value === 'customurl') {
+      return <div className="modalTop">
+          <p className="modeLabel">URL:</p>
+          <input type="text" id="modelInput" />
+        </div>
+    } else {
+      return null
+    }
+  }
+
   const ShareRow = props => {
     if (props.isOpen) {
       return (
@@ -148,6 +159,7 @@ export default props => {
         </div>
       </div>
       <ShareRow {...props} />
+      <URLInput/>
       <div><a href={currentModel.link} target="_blank">{currentModel.link}</a></div>
     </Modal>
   )

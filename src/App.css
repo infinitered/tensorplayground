@@ -244,4 +244,10 @@ main {
   padding-left: 8px;
 }
 
+#modelInput {
+  flex: 1;
+  margin: 5px;
+  padding: 0 4px;
+}
+
 

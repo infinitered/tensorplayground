@@ -19,7 +19,7 @@ const ShareRow = props => {
         <div className="leftSide">
           <input
             type="text"
-            class="shareBox"
+            className="shareBox"
             value={inputURL}
             onChange={({ target }) => {
               setInputURL(target.value)

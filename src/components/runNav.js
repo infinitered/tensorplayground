@@ -58,7 +58,7 @@ export default props => (
     <div className="rightSide">
         <FontAwesomeIcon icon={faFileCode} /> <a className="navLink" href={`https://js.tensorflow.org/api/${tfVersion}/`} target="_blank">TFJS Docs</a>
         <FontAwesomeIcon icon={faGithub} /> <a className="navLink" href="https://github.com/infinitered/tensorplayground" target="_blank">GitHub</a>
-        <FontAwesomeIcon icon={faCodeBranch} /> <a className="navLink" href="#" target="_blank">Learn ML</a>
+        <FontAwesomeIcon icon={faCodeBranch} /> <a className="navLink" href="https://infinite.red/machinelearning" target="_blank">Learn ML</a>
     </div>
   </nav>
 )
