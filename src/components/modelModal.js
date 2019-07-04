@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 // modals
 import Modal from 'react-modal'
 // dropdown
@@ -13,7 +13,7 @@ const options = [
     value: 'customurl',
     label: 'Custom URL',
     className: 'customURL',
-    info: 'Custom URL'
+    fromTFHub: false
   },
   {
     type: 'group',
@@ -67,35 +67,51 @@ const options = [
   }
 ]
 
+const getFullInfo = mKey => {
+  const choices = options
+    .map(x =>
+      x.value ? x : null || (x.items && x.items.map(y => (y.value ? y : null)))
+    )
+    .flat()
+  return choices.find(x => x.value === mKey)
+}
+
+const URLInput = props => {
+  if (props.show) {
+    return (
+      <div className="modalTop" key="urlInputDiv">
+        <p className="modeLabel">URL:</p>
+        <input
+          type="text"
+          name="modelURLInput"
+          key="modelURLInput"
+          id="modelInput"
+          value={props.modelURL}
+          onChange={props.urlCallback}
+        />
+      </div>
+    )
+  } else {
+    return <div />
+  }
+}
+
 export default props => {
   const [currentModel, setCurrentModel] = useState({})
-
-  const getFullInfo = mKey => {
-    const choices = options
-      .map(x =>
-        x.value
-          ? x
-          : null || (x.items && x.items.map(y => (y.value ? y : null)))
-      )
-      .flat()
-    return choices.find(x => x.value === mKey)
-  }
+  const [modelURL, setModelURL] = useState('')
 
   const dropdownChange = ({ value }) => {
     const selected = getFullInfo(value)
     setCurrentModel(selected)
   }
 
-  const URLInput = () => {
-    if (currentModel.value === 'customurl') {
-      return <div className="modalTop">
-          <p className="modeLabel">URL:</p>
-          <input type="text" id="modelInput" />
-        </div>
-    } else {
-      return null
-    }
-  }
+  const urlCallback = useCallback(({ target }) => {
+    setModelURL(target.value)
+    let selected = getFullInfo('customurl')
+    selected.url = target.value
+    selected.info = target.value
+    setCurrentModel(selected)
+  })
 
   const ShareRow = props => {
     if (props.isOpen) {
@@ -139,9 +155,10 @@ export default props => {
 
   return (
     <Modal
+      key="modelModalInner"
       isOpen={props.isOpen}
       onRequestClose={props.hideModal}
-      shouldCloseOnOverlayClick={true}
+      shouldCloseOnOverlayClick={false}
       shouldCloseOnEscape={true}
       closeTimeoutMS={750}
       className="modal"
@@ -159,8 +176,17 @@ export default props => {
         </div>
       </div>
       <ShareRow {...props} />
-      <URLInput/>
-      <div><a href={currentModel.link} target="_blank">{currentModel.link}</a></div>
+      <URLInput
+        key="urlInputComponent"
+        show={currentModel.value === 'customurl'}
+        modelURL={modelURL}
+        urlCallback={urlCallback}
+      />
+      <div>
+        <a href={currentModel.link} target="_blank">
+          {currentModel.link}
+        </a>
+      </div>
     </Modal>
   )
 }

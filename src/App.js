@@ -355,6 +355,7 @@ function App() {
         hideModal={hideAllModals}
       />
       <ModelModal
+        key="ModelModal"
         isOpen={sandboxSettings.modelVisible}
         hideModal={hideAllModals}
         onModelLoad={info => {

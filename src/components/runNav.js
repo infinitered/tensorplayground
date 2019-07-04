@@ -9,9 +9,7 @@ import {
   faCodeBranch,
   faFileCode
 } from '@fortawesome/free-solid-svg-icons'
-import {
-  faGithub
-} from '@fortawesome/free-brands-svg-icons'
+import { faGithub } from '@fortawesome/free-brands-svg-icons'
 // Get TF Version
 const packageInfo = require('../../package.json')
 const tfVersion = packageInfo.dependencies['@tensorflow/tfjs'].replace(
@@ -56,9 +54,33 @@ export default props => (
       </button>
     </div>
     <div className="rightSide">
-        <FontAwesomeIcon icon={faFileCode} /> <a className="navLink" href={`https://js.tensorflow.org/api/${tfVersion}/`} target="_blank">TFJS Docs</a>
-        <FontAwesomeIcon icon={faGithub} /> <a className="navLink" href="https://github.com/infinitered/tensorplayground" target="_blank">GitHub</a>
-        <FontAwesomeIcon icon={faCodeBranch} /> <a className="navLink" href="https://infinite.red/machinelearning" target="_blank">Learn ML</a>
+      <FontAwesomeIcon icon={faFileCode} />{' '}
+      <a
+        className="navLink"
+        href={`https://js.tensorflow.org/api/${tfVersion}/`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        TFJS Docs
+      </a>
+      <FontAwesomeIcon icon={faGithub} />{' '}
+      <a
+        className="navLink"
+        href="https://github.com/infinitered/tensorplayground"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
+      <FontAwesomeIcon icon={faCodeBranch} />{' '}
+      <a
+        className="navLink"
+        href="https://infinite.red/machinelearning"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Learn ML
+      </a>
     </div>
   </nav>
 )
