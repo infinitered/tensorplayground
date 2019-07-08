@@ -47,7 +47,6 @@ const ColorBlock = props => (
 
 const printTensor = (areaBox, tensor) => {
   if (tensor) {
-    console.log('Tensor Print', tensor)
     const printText = `Details of Tensor
     Matrix Rank: ${tensor.rankType},
     Shape: ${tensor.shape} (Height, Width, Channels)

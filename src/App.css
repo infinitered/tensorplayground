@@ -102,13 +102,29 @@ main {
 .resultContainer {
   flex: 1;
   background-color: #20262e;
+  color: white;
 }
 
-.resultContainer:empty {
+#react-tabs-1:empty {
   background-image: url('./img/run.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: 50%;
+  min-height: 300px;
+}
+
+.react-tabs__tab-list {
+  background-color: #7b5aa1;
+  font-size: 0.8em;
+}
+
+.react-tabs__tab--selected {
+  color: #181f27;
+  background-color: #fee;
+}
+
+.react-tabs__tab {
+  color: white;
 }
 
 #learnLink {
@@ -250,4 +266,9 @@ main {
   padding: 0 4px;
 }
 
-
+#consoleOut {
+  padding: 0 10px 10px 10px;
+  margin: 0;
+  font-size: 1.2em;
+  color: rgb(158, 167, 186);
+}
