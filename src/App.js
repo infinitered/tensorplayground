@@ -15,6 +15,7 @@ import 'brace/theme/dracula'
 // merge state custom hook
 import useMergeState from './lib/useMergeState'
 import convertURLToTensor from './lib/convertURLtoTensor'
+import addToConsoleLog from './lib/addToConsoleLog'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
@@ -26,6 +27,12 @@ import InputModal from './components/inputModal'
 import RunNav from './components/runNav'
 // Input Tensor info etc.
 import inputTensors from './data/inputTensors'
+
+addToConsoleLog(args => {
+  alert(args[0])
+})
+
+console.log('test')
 
 const playExplainer = event => {
   const iframe = event.target.getIframe()
