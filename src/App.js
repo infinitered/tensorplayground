@@ -12,9 +12,14 @@ import 'brace'
 import 'brace/mode/javascript'
 import 'brace/theme/dracula'
 
+// Tabs and style
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
+import 'react-tabs/style/react-tabs.css'
+
 // merge state custom hook
 import useMergeState from './lib/useMergeState'
 import convertURLToTensor from './lib/convertURLtoTensor'
+import addToConsoleLog from './lib/addToConsoleLog'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
@@ -24,6 +29,7 @@ import ShareModal from './components/shareModal'
 import ModelModal from './components/modelModal'
 import InputModal from './components/inputModal'
 import RunNav from './components/runNav'
+import ClearButton from './components/clearButton'
 // Input Tensor info etc.
 import inputTensors from './data/inputTensors'
 
@@ -62,7 +68,18 @@ function App() {
     activeModelInfo: {},
     shareVisible: false,
     modelVisible: false,
-    inputVisible: false
+    inputVisible: false,
+    consoleOutput: ''
+  })
+
+  // Jump in on console.log and grab it
+  addToConsoleLog(args => {
+    // Converts args into regular array
+    const arrayStyleArgs = [].slice.call(args)
+    const allThings = '\n' + arrayStyleArgs.join('\n')
+    setSandboxSettings({
+      consoleOutput: sandboxSettings.consoleOutput + allThings
+    })
   })
 
   const sharePlayground = () => {
@@ -219,7 +236,8 @@ function App() {
       // close modals
       shareVisible: false,
       modelVisible: false,
-      inputVisible: false
+      inputVisible: false,
+      consoleOutput: ''
     })
   }
 
@@ -354,7 +372,22 @@ function App() {
           <CodeProfile profile={sandboxSettings.codeProfile} />
         </div>
         <div className="resultContainer">
-          <ImageTensorInspector tensor={sandboxSettings.displayTensor} />
+          <Tabs>
+            <TabList>
+              <Tab>Results</Tab>
+              <Tab>Console</Tab>
+            </TabList>
+
+            <TabPanel>
+              <ImageTensorInspector tensor={sandboxSettings.displayTensor} />
+            </TabPanel>
+            <TabPanel>
+              <ClearButton
+                clear={() => setSandboxSettings({ consoleOutput: '' })}
+              />
+              <pre id="consoleOut">{sandboxSettings.consoleOutput}</pre>
+            </TabPanel>
+          </Tabs>
         </div>
       </main>
       <footer>
@@ -368,8 +401,8 @@ function App() {
         key="ModelModal"
         isOpen={sandboxSettings.modelVisible}
         hideModal={hideAllModals}
-        onModelLoad={info => {
-          setupSandbox(sandboxSettings.inputTensorInfo, {
+        onModelLoad={async info => {
+          await setupSandbox(sandboxSettings.inputTensorInfo, {
             modelInfo: info
           })
         }}

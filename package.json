@@ -16,6 +16,7 @@
     "react-modal": "^3.8.1",
     "react-progress-button": "^5.1.0",
     "react-scripts": "3.0.1",
+    "react-tabs": "^3.0.0",
     "react-youtube": "^7.9.0"
   },
   "scripts": {
