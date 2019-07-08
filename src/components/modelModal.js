@@ -130,7 +130,7 @@ export default props => {
             <ProgressButton
               className="modalProgressButton"
               onClick={async () => {
-                props.onModelLoad(currentModel)
+                await props.onModelLoad(currentModel)
               }}
               onSuccess={props.hideModal}
               onError={e => window.alert(e.message)}

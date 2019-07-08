@@ -368,8 +368,8 @@ function App() {
         key="ModelModal"
         isOpen={sandboxSettings.modelVisible}
         hideModal={hideAllModals}
-        onModelLoad={info => {
-          setupSandbox(sandboxSettings.inputTensorInfo, {
+        onModelLoad={async info => {
+          await setupSandbox(sandboxSettings.inputTensorInfo, {
             modelInfo: info
           })
         }}
