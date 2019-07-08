@@ -122,8 +122,10 @@ function App() {
       if (Array.isArray(full)) {
         const promiseArray = full.map(url => convertURLToTensor(url, channels))
         const tensors = await Promise.all(promiseArray)
-        // gonna have to use tf.stack
+        // Create batch tensor
         tensorResult = tf.stack(tensors)
+        // reclaim original tensor memory
+        tensors.map(x => x.dispose())
       } else {
         tensorResult = await convertURLToTensor(full, channels)
       }
