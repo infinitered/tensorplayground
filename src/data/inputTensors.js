@@ -14,10 +14,10 @@ export default [
     channels: 1
   },
   {
-    id: 'gant',
+    id: 'batch',
     thumb: './batch_thumb.jpg',
-    desc: 'Image Batch',
-    full: ['./bella.jpg', './italy_rgb.jpg', './gant.jpg'],
+    desc: 'RGB Image Batch',
+    full: ['./batch1.jpg', './batch2.jpg', './batch3.jpg'],
     channels: 3
   }
 ]

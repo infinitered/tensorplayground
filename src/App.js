@@ -14,6 +14,7 @@ import 'brace/theme/dracula'
 
 // merge state custom hook
 import useMergeState from './lib/useMergeState'
+import convertURLToTensor from './lib/convertURLtoTensor'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
@@ -111,27 +112,34 @@ function App() {
     }
   }
 
-  const tensorize = data => {
-    const { full: demoImage, channels } = data
-    return new Promise((resolve, reject) => {
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      img.src = demoImage
-      img.onload = () => {
-        // cleanup
-        tf.disposeVariables()
-        let previousActive = sandboxSettings.activeTensor
-        sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
-        const tensorImg = tf.browser.fromPixels(img, channels)
-        setSandboxSettings({ activeTensor: tensorImg, displayTensor: null })
-        if (previousActive) previousActive.dispose()
-        resolve(tensorImg.shape)
+  const tensorize = async data => {
+    const { full, channels } = data
+
+    try {
+      // pre-cleanup
+      tf.disposeVariables()
+      let tensorResult
+      if (Array.isArray(full)) {
+        const promiseArray = full.map(url => convertURLToTensor(url, channels))
+        const tensors = await Promise.all(promiseArray)
+        // gonna have to use tf.stack
+        tensorResult = tf.stack(tensors)
+      } else {
+        tensorResult = await convertURLToTensor(full, channels)
       }
-      img.onerror = () => {
-        setSandboxSettings({ currentError: `Unable to load: ${demoImage}` })
-        reject()
-      }
-    })
+      let previousActive = sandboxSettings.activeTensor
+      sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
+      setSandboxSettings({
+        activeTensor: tensorResult,
+        displayTensor: null,
+        currentError: null
+      })
+      if (previousActive) previousActive.dispose()
+      return tensorResult.shape
+    } catch (e) {
+      setSandboxSettings({ currentError: `Unable to load: ${full}` })
+      console.log(e.message)
+    }
   }
 
   const setupSandbox = async (data, settings = {}) => {
@@ -152,7 +160,7 @@ function App() {
     }
 
     // If we were passed info but no model, load the model
-    if (modelInfo) {
+    if (modelInfo && modelInfo.url) {
       const loadFunction =
         modelInfo.type === 'graph' ? tf.loadGraphModel : tf.loadLayersModel
       // out with the old (if it exists)
