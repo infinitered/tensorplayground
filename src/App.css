@@ -114,7 +114,7 @@ main {
 }
 
 .react-tabs__tab-list {
-  background-color: #7b5aa1;
+  background-color: rgba(135, 98, 176, 0.6);
   font-size: 0.8em;
 }
 
