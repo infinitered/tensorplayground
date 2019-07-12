@@ -15,11 +15,10 @@ export default props => {
           {tensor.shape[0]} images in a 4D Tensor
         </h3>
         {tf.unstack(tensor).map(t => (
-          <ImageTensorInspector tensor={t} />
+          <ImageTensorInspector tensor={t} selfDestruct />
         ))}
       </div>
     )
-    // return tf.unstack(tensor).map(t => <ImageTensorInspector tensor={t} />)
   } else {
     return (
       <p>We need a single Rank 3 Tensor, or a batch Rank 4 tensor result!</p>

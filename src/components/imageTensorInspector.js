@@ -121,6 +121,7 @@ export default props => {
       if (props.tensor) {
         printTensor(tensorText.current, props.tensor)
         await tf.browser.toPixels(props.tensor, tensorDisplay.current)
+        if (props.selfDestruct) props.tensor.dispose()
       }
     }
     updateDisplay() // call that async goodness
