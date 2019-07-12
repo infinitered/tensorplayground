@@ -1,15 +1,7 @@
 import React from 'react'
 // FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faPlay,
-  faAlignLeft,
-  faExternalLinkAlt,
-  faLayerGroup,
-  faCodeBranch,
-  faFileCode,
-  faTrashAlt
-} from '@fortawesome/free-solid-svg-icons'
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 export default props => (
   <button

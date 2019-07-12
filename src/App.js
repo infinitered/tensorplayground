@@ -24,7 +24,7 @@ import addToConsoleLog from './lib/addToConsoleLog'
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
 import MemoryStatus from './components/memoryStatus'
-import ImageTensorInspector from './components/imageTensorInspector'
+import Results from './components/results'
 import ShareModal from './components/shareModal'
 import ModelModal from './components/modelModal'
 import InputModal from './components/inputModal'
@@ -377,9 +377,8 @@ function App() {
               <Tab>Results</Tab>
               <Tab>Console</Tab>
             </TabList>
-
             <TabPanel>
-              <ImageTensorInspector tensor={sandboxSettings.displayTensor} />
+              <Results tensor={sandboxSettings.displayTensor} />
             </TabPanel>
             <TabPanel>
               <ClearButton
