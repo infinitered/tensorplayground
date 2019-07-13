@@ -100,29 +100,36 @@ function App() {
   const runCode = async () => {
     try {
       sharePlayground() // update URL
-      const codeProfile = await tf.profile(() => {
-        const resultTensor = tf.tidy(() => {
-          const userFunc = eval(sandboxSettings.userCode)
-          return userFunc(
-            sandboxSettings.activeTensor,
-            tf,
-            sandboxSettings.activeModel
+      let codeProfile
+      const timeInfo = await tf.time(async () => {
+        codeProfile = await tf.profile(() => {
+          const resultTensor = tf.tidy(() => {
+            const userFunc = eval(sandboxSettings.userCode)
+            return userFunc(
+              sandboxSettings.activeTensor,
+              tf,
+              sandboxSettings.activeModel
+            )
+          })
+          // Error if sandbox was empty
+          if (!resultTensor) {
+            tf.disposeVariables()
+            throw new Error('Nothing was returned from the sandbox!')
+          }
+          // dispose current display if not used
+          if (
+            resultTensor !== sandboxSettings.displayTensor &&
+            sandboxSettings.displayTensor !== sandboxSettings.activeTensor
           )
+            sandboxSettings.displayTensor &&
+              sandboxSettings.displayTensor.dispose()
+          setSandboxSettings({
+            displayTensor: resultTensor,
+            currentError: null
+          })
         })
-        // Error if sandbox was empty
-        if (!resultTensor) {
-          tf.disposeVariables()
-          throw new Error('Nothing was returned from the sandbox!')
-        }
-        // dispose current display if not used
-        if (
-          resultTensor !== sandboxSettings.displayTensor &&
-          sandboxSettings.displayTensor !== sandboxSettings.activeTensor
-        )
-          sandboxSettings.displayTensor &&
-            sandboxSettings.displayTensor.dispose()
-        setSandboxSettings({ displayTensor: resultTensor, currentError: null })
       })
+      codeProfile.timeInfo = timeInfo
       setSandboxSettings({ codeProfile })
     } catch (e) {
       setSandboxSettings({ currentError: e.message, displayTensor: null })
@@ -372,7 +379,7 @@ function App() {
         <div className="resultContainer">
           <Tabs>
             <TabList>
-              <Tab>Results</Tab>
+              <Tab>Result Tensor</Tab>
               <Tab>Console</Tab>
             </TabList>
             <TabPanel>

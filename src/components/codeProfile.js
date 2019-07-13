@@ -3,10 +3,11 @@ import formatKB from '../lib/formatKB'
 
 export default ({ profile }) => {
   // grab values, but default to zero
-  const { newBytes, newTensors, peakBytes } = profile
+  const { newBytes, newTensors, peakBytes, timeInfo } = profile
     ? profile
-    : { newBytes: 0, newTensors: 0, peakBytes: 0 }
+    : { newBytes: 0, newTensors: 0, peakBytes: 0, timeInfo: { kernelMs: 0 } }
   const cleanPeak = peakBytes < 0 ? 0 : peakBytes
+  const timeMS = timeInfo.kernelMs.toFixed(2)
   return (
     <div style={styles.container}>
       <h3 style={styles.title}>Code Result Memory</h3>
@@ -24,6 +25,11 @@ export default ({ profile }) => {
         <div style={styles.dataPoint}>
           <p>
             <strong>Peak Bytes:</strong> {formatKB(cleanPeak)} KB
+          </p>
+        </div>
+        <div style={styles.dataPoint}>
+          <p>
+            <strong>Execution:</strong> {timeMS} ms
           </p>
         </div>
       </div>
