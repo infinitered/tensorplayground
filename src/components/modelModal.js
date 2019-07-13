@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 // modals
 import Modal from 'react-modal'
 // dropdown
@@ -105,13 +105,13 @@ export default props => {
     setCurrentModel(selected)
   }
 
-  const urlCallback = useCallback(({ target }) => {
+  const urlCallback = ({ target }) => {
     setModelURL(target.value)
     let selected = getFullInfo('customurl')
     selected.url = target.value
     selected.info = target.value
     setCurrentModel(selected)
-  })
+  }
 
   const ShareRow = props => {
     if (props.isOpen) {
@@ -183,7 +183,7 @@ export default props => {
         urlCallback={urlCallback}
       />
       <div>
-        <a href={currentModel.link} target="_blank">
+        <a href={currentModel.link} target="_blank" rel="noopener noreferrer">
           {currentModel.link}
         </a>
       </div>

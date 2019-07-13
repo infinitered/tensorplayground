@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect } from 'react'
 import './App.css'
 import * as tf from '@tensorflow/tfjs'
 import YouTube from 'react-youtube'
@@ -263,13 +263,13 @@ function App() {
 
   // enable shift + enter shortcut (Memoized)
   // moving to useEffect loses access to state from runCode
-  document.onkeydown = useCallback(evt => {
+  document.onkeydown = evt => {
     evt = evt || window.event
     if (evt.shiftKey && evt.keyCode === 13) {
       runCode()
       evt.preventDefault()
     }
-  })
+  }
 
   const hideAllModals = () => {
     setSandboxSettings({
@@ -346,9 +346,7 @@ function App() {
               theme="dracula"
               name="codeBlock"
               // Memoize the callback for efficiency
-              onChange={useCallback(code =>
-                setSandboxSettings({ userCode: code })
-              )}
+              onChange={code => setSandboxSettings({ userCode: code })}
               fontSize={14}
               width="100%"
               height="100%"
