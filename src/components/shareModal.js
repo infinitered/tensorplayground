@@ -1,25 +1,38 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 // modals
 import Modal from 'react-modal'
 import copyToClipboard from '../lib/copyToClipboard'
+import { BitlyClient } from 'bitly'
+
+const bitly = new BitlyClient(process.env.REACT_APP_BITLY_TOKEN, {})
 
 const ShareRow = props => {
+  const [shareLink, setShareLink] = useState(window.location.href)
+
+  // onload
+  useEffect(() => {
+    const generateLink = async () => {
+      const shortLink = await bitly.shorten(window.location.href)
+      setShareLink(shortLink.url)
+    }
+    generateLink()
+  }, [])
+
   if (props.isOpen) {
     return (
       <div className="modalTop">
         <div className="leftSide">
-          <input
-            type="text"
-            value={window.location.href}
-            class="shareBox"
-            readonly
-          />
+          <input type="text" value={shareLink} className="shareBox" readOnly />
         </div>
         <div className="modalClose">
           <button
             className="modalButton"
             onClick={() => {
-              copyToClipboard(window.location.href)
+              try {
+                copyToClipboard(shareLink)
+              } catch (e) {
+                throw e
+              }
               props.hideModal()
             }}
           >
@@ -62,6 +75,6 @@ export default props => (
         </button>
       </div>
     </div>
-    <ShareRow {...props} />
+    <ShareRow {...props} link={'loading'} />
   </Modal>
 )
