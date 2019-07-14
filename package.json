@@ -9,6 +9,7 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@tensorflow/tfjs": "^1.1.2",
     "@tensorflow/tfjs-converter": "^1.2.2",
+    "bitly": "^6.1.0",
     "react": "^16.8.6",
     "react-ace": "^7.0.2",
     "react-dom": "^16.8.6",
