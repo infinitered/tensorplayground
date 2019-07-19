@@ -103,6 +103,8 @@ main {
   flex: 1;
   background-color: #20262e;
   color: white;
+  max-width: 50%;
+  overflow: auto;
 }
 
 #react-tabs-1:empty {
@@ -120,7 +122,6 @@ main {
 
 .react-tabs__tab--selected {
   color: #181f27 !important;
-  background-color: #fee;
 }
 
 .react-tabs__tab {

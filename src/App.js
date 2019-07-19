@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import './App.css'
 import * as tf from '@tensorflow/tfjs'
 import YouTube from 'react-youtube'
+import * as stringify from 'json-stringify-safe'
 // Awesome button
 import ProgressButton from 'react-progress-button'
 import '../node_modules/react-progress-button/react-progress-button.css'
@@ -75,7 +76,10 @@ function App() {
   // Jump in on console.log and grab it
   addToConsoleLog(args => {
     // Converts args into regular array
-    const arrayStyleArgs = [].slice.call(args)
+    const arrayArgs = [].slice.call(args)
+    // switch objects to string version of that object
+    const arrayStyleArgs = arrayArgs.map(arg => (typeof arg === 'object' ? stringify(arg, null, 2) : arg))
+    // breaks multiple args into newlines
     const allThings = '\n' + arrayStyleArgs.join('\n')
     setSandboxSettings({
       consoleOutput: sandboxSettings.consoleOutput + allThings
