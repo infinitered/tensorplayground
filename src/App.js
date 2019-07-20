@@ -78,7 +78,9 @@ function App() {
     // Converts args into regular array
     const arrayArgs = [].slice.call(args)
     // switch objects to string version of that object
-    const arrayStyleArgs = arrayArgs.map(arg => (typeof arg === 'object' ? stringify(arg, null, 2) : arg))
+    const arrayStyleArgs = arrayArgs.map(arg =>
+      typeof arg === 'object' ? stringify(arg, null, 2) : arg
+    )
     // breaks multiple args into newlines
     const allThings = '\n' + arrayStyleArgs.join('\n')
     setSandboxSettings({
@@ -96,7 +98,7 @@ function App() {
       window.history.replaceState(
         'code',
         'Tensor Playground',
-        `${window.location.origin}?${urlParams}`
+        `${window.location.origin}${window.location.pathname}?${urlParams}`
       )
     }
   }
@@ -232,7 +234,7 @@ function App() {
         window.history.replaceState(
           'code',
           'Tensor Playground',
-          `${window.location.origin}`
+          `${window.location.origin}${window.location.pathname}`
         )
       }
     }
