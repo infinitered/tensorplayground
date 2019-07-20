@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "express": "^4.17.1",
+    "netlify-lambda": "^1.5.0",
+    "serverless-http": "^2.0.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.19",
     "@fortawesome/free-brands-svg-icons": "^5.9.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
@@ -22,7 +25,11 @@
     "react-youtube": "^7.9.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "expressbuild": "netlify-lambda build express",
+    "start": "node server.js",
+    "snapapp": "node snapapp/bin/snapapp",
+    "startLocal": "node localServer.js",
+    "startDev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
