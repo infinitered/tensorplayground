@@ -135,7 +135,7 @@ function App() {
           })
         })
       })
-      codeProfile.timeInfo = timeInfo
+      if (codeProfile) codeProfile.timeInfo = timeInfo
       setSandboxSettings({ codeProfile })
     } catch (e) {
       setSandboxSettings({ currentError: e.message, displayTensor: null })
