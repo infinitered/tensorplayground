@@ -37,6 +37,12 @@ module.exports = {
       path.join(process.cwd(), snapName)
     )
 
+    // return homepage to build folder
+    await patching.update(packInfoPath, config => {
+      config.homepage = '/build'
+      return config
+    })
+
     console.log('Successfully completed snapshot - ' + snapName)
   }
 }
