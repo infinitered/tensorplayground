@@ -10,6 +10,7 @@ module.exports = {
     if (!moveForward) return
 
     const packInfoPath = path.join(process.cwd(), 'package.json')
+    const redirectsPath = path.join(process.cwd(), '_redirects')
     const packInfo = require(packInfoPath)
     const mostRecent = packInfo.snapshots.slice(-1)
 
@@ -30,6 +31,8 @@ module.exports = {
       config.snapshots = packInfo.snapshots
       return config
     })
+
+    await patching.replace(redirectsPath, mostRecent, snapName)
 
     await system.run('yarn build')
     filesystem.move(
