@@ -24,6 +24,7 @@ snapshots.map(snapshotName => {
   )
 })
 
+// If we ever render root, redirect to latest snapshot instead
 router.get('/', (_req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/html' })
   res.write(`<script>top.location.href = "/${snapshots.slice(-1)}"</script>`)
