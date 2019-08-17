@@ -160,6 +160,8 @@ function App() {
         tensorResult = tf.stack(tensors)
         // reclaim original tensor memory
         tensors.map(x => x.dispose())
+      } else if (!full) {
+        tensorResult = null
       } else {
         tensorResult = await convertURLToTensor(full, channels)
       }
@@ -171,7 +173,7 @@ function App() {
         currentError: null
       })
       if (previousActive) previousActive.dispose()
-      return tensorResult.shape
+      return tensorResult && tensorResult.shape
     } catch (e) {
       setSandboxSettings({ currentError: `Unable to load: ${full}` })
       console.log(e.message)
@@ -214,7 +216,10 @@ function App() {
       // Setup code
       startCode = `// TensorPlayground.com
 // ${data.desc}
-// INPUT TENSOR SHAPE: [${inputShape}]
+`
+      // if we have an input tensor, add comment
+      if (inputShape)
+        startCode += `// INPUT TENSOR SHAPE: [${inputShape}]
 `
 
       // If they have a model add that

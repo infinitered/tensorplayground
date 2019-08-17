@@ -19,5 +19,12 @@ export default [
     desc: 'RGB Image Batch',
     full: ['./batch1.jpg', './batch2.jpg', './batch3.jpg'],
     channels: 3
+  },
+  {
+    id: 'none',
+    thumb: './null_thumb.png',
+    desc: 'No Tensor',
+    full: null,
+    channels: 0
   }
 ]
