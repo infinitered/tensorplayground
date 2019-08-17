@@ -21,6 +21,7 @@ import 'react-tabs/style/react-tabs.css'
 import useMergeState from './lib/useMergeState'
 import convertURLToTensor from './lib/convertURLtoTensor'
 import addToConsoleLog from './lib/addToConsoleLog'
+import startCodeCreator from './lib/startCodeCreator'
 // Custom components
 import TensorSelector from './components/tensorSelector'
 import CodeProfile from './components/codeProfile'
@@ -113,8 +114,8 @@ function App() {
             const resultTensor = tf.tidy(() => {
               const userFunc = eval(sandboxSettings.userCode)
               return userFunc(
-                sandboxSettings.activeTensor,
                 tf,
+                sandboxSettings.activeTensor,
                 sandboxSettings.activeModel
               )
             })
@@ -184,7 +185,6 @@ function App() {
     // kickoff tensorization of input
     const inputShape = await tensorize(data)
     const { code, modelInfo, killModel } = settings
-    let startCode
     let model = sandboxSettings.activeModel
     let activeModelInfo = modelInfo
       ? modelInfo
@@ -209,44 +209,13 @@ function App() {
       })
     }
 
-    // Handle code setup
-    if (code) {
-      startCode = code
-    } else {
-      // Setup code
-      startCode = `// TensorPlayground.com
-// ${data.desc}
-`
-      // if we have an input tensor, add comment
-      if (inputShape)
-        startCode += `// INPUT TENSOR SHAPE: [${inputShape}]
-`
-
-      // If they have a model add that
-      if (model) {
-        startCode += `// MODEL: ${activeModelInfo.label} ${activeModelInfo.info}
-
-(aTensor, tf, model) => {
-  // return tensor to show
-  return aTensor
-}`
-      } else {
-        // No model start code
-        startCode += `
-(aTensor, tf) => {
-  // return tensor to show
-  return aTensor
-}`
-      }
-      // Clear URL
-      if (window.history.replaceState) {
-        window.history.replaceState(
-          'code',
-          'Tensor Playground',
-          `${window.location.origin}${window.location.pathname}`
-        )
-      }
-    }
+    // creates teh appropriate start code
+    const startCode = startCodeCreator(
+      data.desc,
+      inputShape,
+      activeModelInfo,
+      code
+    )
 
     // store it al!
     setSandboxSettings({
@@ -395,7 +364,7 @@ function App() {
           <Tabs>
             <TabList>
               <Tab>Result Tensor</Tab>
-              <Tab>Console</Tab>
+              <Tab>Console Logs</Tab>
             </TabList>
             <TabPanel>
               <Results tensor={sandboxSettings.displayTensor} />

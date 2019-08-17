@@ -23,7 +23,7 @@ export default [
   {
     id: 'none',
     thumb: './null_thumb.png',
-    desc: 'No Tensor',
+    desc: 'No Input Tensor',
     full: null,
     channels: 0
   }

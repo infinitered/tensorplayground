@@ -61,7 +61,7 @@ export default props => (
         target="_blank"
         rel="noopener noreferrer"
       >
-        TFJS Docs
+        TensorFlow.js Docs
       </a>
       <FontAwesomeIcon icon={faGithub} />{' '}
       <a
@@ -79,7 +79,7 @@ export default props => (
         target="_blank"
         rel="noopener noreferrer"
       >
-        Learn ML
+        Learn
       </a>
     </div>
   </nav>
