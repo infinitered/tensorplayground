@@ -130,6 +130,7 @@ function App() {
               sandboxSettings.displayTensor !== sandboxSettings.activeTensor
             )
               sandboxSettings.displayTensor &&
+                sandboxSettings.displayTensor.dispose &&
                 sandboxSettings.displayTensor.dispose()
             setSandboxSettings({
               displayTensor: resultTensor,
@@ -167,7 +168,9 @@ function App() {
         tensorResult = await convertURLToTensor(full, channels)
       }
       let previousActive = sandboxSettings.activeTensor
-      sandboxSettings.displayTensor && sandboxSettings.displayTensor.dispose()
+      sandboxSettings.displayTensor &&
+        sandboxSettings.displayTensor.dispose &&
+        sandboxSettings.displayTensor.dispose()
       setSandboxSettings({
         activeTensor: tensorResult,
         displayTensor: null,

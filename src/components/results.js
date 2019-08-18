@@ -1,5 +1,6 @@
 import React from 'react'
 import ImageTensorInspector from './imageTensorInspector'
+import * as stringify from 'json-stringify-safe'
 import * as tf from '@tensorflow/tfjs'
 
 export default props => {
@@ -36,7 +37,7 @@ export default props => {
   } else {
     return (
       <div className="tensorResultSection">
-        <p>We're not sure how to display the returned value.</p>
+        <pre>{stringify(tensor, null, 2)}</pre>
       </div>
     )
   }
