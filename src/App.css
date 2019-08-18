@@ -273,3 +273,7 @@ main {
   font-size: 1.2em;
   color: rgb(158, 167, 186);
 }
+
+.tensorResultSection {
+  padding-left: 10px;
+}

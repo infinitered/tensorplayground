@@ -6,6 +6,20 @@ export default props => {
   const { tensor } = props
   if (!tensor) {
     return null
+  } else if (tensor.rankType === '1') {
+    return (
+      <div className="tensorResultSection">
+        <h3>Rank 1 Tensor</h3>
+        <pre>{tensor.toString()}</pre>
+      </div>
+    )
+  } else if (tensor.rankType === '2') {
+    return (
+      <div className="tensorResultSection">
+        <h3>Rank 2 Tensor</h3>
+        <pre>{tensor.toString()}</pre>
+      </div>
+    )
   } else if (tensor.rankType === '3') {
     return <ImageTensorInspector tensor={tensor} />
   } else if (tensor.rankType === '4') {
@@ -21,7 +35,9 @@ export default props => {
     )
   } else {
     return (
-      <p>We need a single Rank 3 Tensor, or a batch Rank 4 tensor result!</p>
+      <div className="tensorResultSection">
+        <p>We're not sure how to display the returned value.</p>
+      </div>
     )
   }
 }
