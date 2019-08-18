@@ -1,7 +1,7 @@
 const returnCode = params =>
   params.includes('aTensor')
     ? 'return aTensor'
-    : 'return tf.fill([400, 400, 3], 1)'
+    : 'return tf.ones([400, 400, 3])'
 
 export default (description, inputShape, activeModelInfo, code) => {
   let startCode
