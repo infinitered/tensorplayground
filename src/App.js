@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import './App.css'
 import * as tf from '@tensorflow/tfjs'
 import YouTube from 'react-youtube'
@@ -109,7 +109,7 @@ function App() {
       sharePlayground() // update URL
       let codeProfile
       const timeInfo = await tf.time(async () => {
-        codeProfile = await tf.profile(() => {
+        codeProfile = await tf.profile(async () => {
           try {
             const resultTensor = tf.tidy(() => {
               const userFunc = eval(sandboxSettings.userCode)
@@ -235,25 +235,34 @@ function App() {
     })
   }
 
-  // onload
-  useEffect(() => {
-    let urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.has('code') && urlParams.has('inputTensor')) {
-      // setup sandbox based on querystring
-      const inputID = urlParams.get('inputTensor')
-      const modelInfo = JSON.parse(urlParams.get('modelInfo'))
-      let localTensor = inputTensors.find(x => x.id === inputID)
-      const inputTensorInfo = localTensor || {
-        id: inputID,
-        full: inputID,
-        desc: inputID
+  // All loaded up and ready (can't use anything sooner)
+  // Had to move this away from `useEffect` bc too soon
+  // even DOMContentLoaded was firing too fast
+  document.addEventListener('readystatechange', event => {
+    if (document.readyState === 'complete') {
+      console.log('says it loaded')
+      let urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.has('code') && urlParams.has('inputTensor')) {
+        // setup sandbox based on querystring
+        const inputID = urlParams.get('inputTensor')
+        const modelInfo = JSON.parse(urlParams.get('modelInfo'))
+        let localTensor = inputTensors.find(x => x.id === inputID)
+        const inputTensorInfo = localTensor || {
+          id: inputID,
+          full: inputID,
+          desc: inputID
+        }
+
+        setupSandbox(inputTensorInfo, {
+          code: urlParams.get('code'),
+          modelInfo
+        })
+      } else {
+        // initialize to first input
+        setupSandbox(inputTensors[0])
       }
-      setupSandbox(inputTensorInfo, { code: urlParams.get('code'), modelInfo })
-    } else {
-      // initialize to first input
-      setupSandbox(inputTensors[0])
     }
-  }, [])
+  })
 
   // enable shift + enter shortcut (Memoized)
   // moving to useEffect loses access to state from runCode
