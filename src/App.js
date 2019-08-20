@@ -312,7 +312,7 @@ function App() {
           <div className="rightSide">
             <div className="explainerVideo">
               <YouTube
-                videoId="hdAX6ORhihA"
+                videoId="B7WAbGmdTZI"
                 onPlay={playExplainer}
                 onEnd={stopExplainer}
                 onPause={stopExplainer}
