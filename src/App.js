@@ -35,6 +35,8 @@ import ClearButton from './components/clearButton'
 // Input Tensor info etc.
 import inputTensors from './data/inputTensors'
 
+console.log('testing', process.env.REACT_APP_BITLY_TOKEN)
+
 const playExplainer = event => {
   const iframe = event.target.getIframe()
   // fullscreen it
