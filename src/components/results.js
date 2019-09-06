@@ -32,10 +32,19 @@ const charterize = plotData => {
   }
 }
 
+const toType = (obj) => ({}).toString.call(obj).match(/\s(\w+)/)[1]
+
 export default props => {
   const { tensor } = props
   if (!tensor) {
     return null
+  } else if (tensor.rankType === '0') {
+    return (
+      <div className="tensorResultSection">
+        <h3>Rank 0 Scalar</h3>
+        <pre>{tensor.toString()}</pre>
+      </div>
+    )    
   } else if (tensor.rankType === '1') {
     return (
       <div className="tensorResultSection">
@@ -67,6 +76,7 @@ export default props => {
   } else {
     return (
       <div className="tensorResultSection">
+        <h3>{toType(tensor)}</h3>
         <pre>{stringify(tensor, null, 2)}</pre>
       </div>
     )

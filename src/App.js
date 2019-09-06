@@ -375,7 +375,7 @@ function App() {
         <div className="resultContainer">
           <Tabs>
             <TabList>
-              <Tab>Result Tensor</Tab>
+              <Tab>Result</Tab>
               <Tab>Console Logs</Tab>
             </TabList>
             <TabPanel>
