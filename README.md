@@ -1,4 +1,9 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Get the Tour of TensorPlayground.com
+
+[![TensorPlayground.com Tour](tour.JPG)](https://github.com/infinitered/tensorplayground)
+
+https://www.tensorplayground.com
+
 
 ## Available Scripts
 
