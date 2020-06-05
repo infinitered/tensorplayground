@@ -1,6 +1,6 @@
 # Get the Tour of TensorPlayground.com
 
-[![TensorPlayground.com Tour](tour.JPG)](https://github.com/infinitered/tensorplayground)
+[![TensorPlayground.com Tour](tour.JPG)](https://www.youtube.com/watch?v=ZYFGCNxj56I)
 
 https://www.tensorplayground.com
 
